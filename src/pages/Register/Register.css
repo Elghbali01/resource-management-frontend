@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #1a3a6b;
+  --primary-light: #2a5298;
+  --primary-dark: #0f2447;
+  --accent: #e85d26;
+  --accent-light: #ff7a45;
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --text: #1a2332;
+  --text-muted: #64748b;
+  --border: rgba(26, 58, 107, 0.12);
+  --success: #0d9488;
+  --success-bg: #f0fdf9;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Sora', sans-serif;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.register-container::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(26, 58, 107, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 90% 100%, rgba(232, 93, 38, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.register-box {
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(26, 58, 107, 0.1);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── HEADER ── */
+.register-header {
+  background: linear-gradient(145deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+  padding: 2.5rem 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border: 2px solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: var(--font);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.register-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.7px;
+  margin-bottom: 0.4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.register-header p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── PROGRESS INDICATOR ── */
+.progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-light);
+  transition: width 0.4s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── FORM BODY ── */
+.register-body {
+  padding: 2rem 2.5rem 2.5rem;
+}
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-label:first-child {
+  margin-top: 0;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── GRID ── */
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+
+/* ── FIELDS ── */
+.field {
+  margin-bottom: 1.1rem;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+
+.field label .required {
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+.field input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.field input::placeholder {
+  color: #a8b4c0;
+  font-size: 0.88rem;
+}
+
+.field input:hover {
+  border-color: rgba(26, 58, 107, 0.3);
+}
+
+.field input:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+  background: #fafcff;
+}
+
+.field input.valid {
+  border-color: var(--success);
+}
+
+.field input.error {
+  border-color: #e53e3e;
+  background: #fff8f8;
+}
+
+/* password strength */
+.password-strength {
+  margin-top: 6px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.strength-bar.weak { background: #e53e3e; }
+.strength-bar.medium { background: #ed8936; }
+.strength-bar.strong { background: var(--success); }
+
+.strength-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* field hint */
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.field-hint.error-text {
+  color: #c0392b;
+}
+
+/* ── INPUT WITH ICON ── */
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap input {
+  padding-right: 46px;
+}
+
+.input-icon-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a8b4c0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.input-icon-btn:hover {
+  color: var(--primary);
+}
+
+/* ── SUBMIT ── */
+.btn-register {
+  width: 100%;
+  height: 52px;
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  margin-top: 1.5rem;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-register:hover {
+  background: var(--primary-light);
+  box-shadow: 0 4px 20px rgba(26, 58, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-register:active {
+  transform: translateY(0);
+}
+
+/* ── BACK TO LOGIN ── */
+.login-link {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.87rem;
+  color: var(--text-muted);
+}
+
+.login-link button,
+.login-link a {
+  color: var(--primary-light);
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.87rem;
+  font-family: var(--font);
+  text-decoration: none;
+  margin-left: 4px;
+  transition: color 0.15s;
+}
+
+.login-link button:hover,
+.login-link a:hover {
+  color: var(--accent);
+}
+
+/* ── SUCCESS STATE ── */
+.success-state {
+  text-align: center;
+  padding: 3rem 2.5rem;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  border: 2px solid var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin: 0 auto 1.5rem;
+}
+
+.success-state h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.success-state p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 580px) {
+  .register-box {
+    border-radius: 16px;
+  }
+
+  .register-header,
+  .register-body {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: 1;
+  }
+}
