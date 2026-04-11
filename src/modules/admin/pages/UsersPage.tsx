@@ -313,6 +313,14 @@ const UsersPage: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedRole]);
+
   // ── Fetch ──
   const fetchUsers = async () => {
     setLoading(true);
@@ -345,6 +353,14 @@ const UsersPage: React.FC = () => {
       return matchSearch && matchRole;
     });
   }, [users, search, selectedRole]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedUsers = useMemo(() => {
+    return filtered.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+    );
+  }, [filtered, currentPage]);
 
   // ── Actions ──
   const handleEditSaved = (updated: UserListResponse) => {
@@ -546,7 +562,7 @@ const UsersPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filtered.map((user) => {
+                {paginatedUsers.map((user) => {
                   const isActive =
                     user.status?.toUpperCase() === "ACTIF" ||
                     user.status?.toUpperCase() === "ACTIVE";
@@ -644,12 +660,34 @@ const UsersPage: React.FC = () => {
               </tbody>
             </table>
 
-            {/* Footer count */}
-            <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/40">
-              <p className="text-xs text-gray-400">
-                {filtered.length} résultat{filtered.length > 1 ? "s" : ""}
-                {users.length !== filtered.length && ` sur ${users.length}`}
+            {/* Footer count & pagination */}
+            <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/40 flex items-center justify-between flex-wrap gap-3">
+              <p className="text-xs text-gray-500 font-medium">
+                Affichage de {filtered.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} à{" "}
+                {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} sur <span className="font-bold">{filtered.length}</span> résultat{filtered.length > 1 ? "s" : ""}
               </p>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  >
+                    Précédent
+                  </button>
+                  <span className="text-xs font-medium text-gray-500 px-2">
+                    Page {currentPage} sur {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  >
+                    Suivant
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
