@@ -214,25 +214,7 @@ body {
   color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 2.5rem;
-}
-
-/* ── ROLE BADGES ── */
-.role-hints {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 2rem;
-}
-
-.role-badge {
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: var(--surface-2);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  font-weight: 500;
-  letter-spacing: 0.2px;
+  line-height: 1.6;
 }
 
 /* ── FORM FIELDS ── */
@@ -351,7 +333,7 @@ body {
   margin-top: 0.5rem;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--primary-light);
   box-shadow: 0 4px 20px rgba(26, 58, 107, 0.3);
   transform: translateY(-1px);
@@ -362,9 +344,15 @@ body {
   box-shadow: none;
 }
 
-.btn-primary.loading {
+.btn-primary.loading,
+.btn-primary:disabled {
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 0.7;
+}
+
+.btn-primary.disabled-look {
+  background: var(--text-muted);
+  cursor: not-allowed;
 }
 
 /* ── DIVIDER ── */
@@ -445,6 +433,157 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ════════════════════════════════════════════════════════
+   ÉTAPE 2 — CHOIX DU RÔLE (Chef de département)
+════════════════════════════════════════════════════════ */
+
+.role-choice-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.role-choice-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  letter-spacing: -0.5px;
+}
+
+.role-choice-header h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.role-choice-header .login-subtitle {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.role-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.role-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+  width: 100%;
+  font-family: var(--font);
+  position: relative;
+}
+
+.role-card:hover {
+  border-color: var(--primary-light);
+  background: #f7faff;
+  box-shadow: 0 4px 16px rgba(26, 58, 107, 0.1);
+  transform: translateY(-1px);
+}
+
+.role-card.selected {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #eef3fc 0%, #f0f5ff 100%);
+  box-shadow: 0 4px 20px rgba(26, 58, 107, 0.15);
+}
+
+.role-card-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.role-card.selected .role-card-icon {
+  background: rgba(26, 58, 107, 0.08);
+  border-color: rgba(26, 58, 107, 0.2);
+}
+
+.role-card-content {
+  flex: 1;
+}
+
+.role-card-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.role-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.role-card-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #fff;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.role-card.selected .role-card-check {
+  background: var(--primary);
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+/* ── Back link ── */
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: color 0.15s;
+  width: 100%;
+  padding: 8px;
+}
+
+.back-link:hover {
+  color: var(--primary-light);
 }
 
 /* ── RESPONSIVE ── */
