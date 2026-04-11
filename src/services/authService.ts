@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8080/api";
+const API = "/api";
 
 // ── Axios instance with JWT interceptor ──────────────────────────────────────
 const axiosAuth = axios.create({ baseURL: API });
@@ -40,18 +40,9 @@ export interface RegisterRequest {
 
 // ── Auth calls ────────────────────────────────────────────────────────────────
 
-/**
- * Étape 1 : login classique (email + password)
- * Si hasDoubleRole == true, le front doit demander le rôle choisi
- * puis rappeler loginWithRole()
- */
 export const login = (data: LoginRequest) =>
   axios.post<LoginResponse>(`${API}/auth/login`, data);
 
-/**
- * Étape 2 (chef de département uniquement) :
- * Renvoi de la requête avec roleChoisi renseigné
- */
 export const loginWithRole = (
   email: string,
   password: string,

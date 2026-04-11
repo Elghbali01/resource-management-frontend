@@ -218,3 +218,27 @@
   background: rgba(232, 93, 38, 0.22);
   color: #ff9a6e;
 }
+
+/* ── Layout Wrappers (Admin) ── */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg);
+  width: 100%;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 260px; /* Offset the 260px sidebar */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 260px);
+}
+
+@media (max-width: 1024px) {
+  .admin-main {
+    margin-left: 0;
+    width: 100%;
+  }
+}

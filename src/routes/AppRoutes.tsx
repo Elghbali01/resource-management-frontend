@@ -1,28 +1,87 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import AdminPage from "../pages/user/AdminPage";
-import ChefPage from "../pages/user/ChefPage";
-import EnseignantPage from "../pages/user/EnseignantPage";
-import ResponsablePage from "../pages/user/ResponsablePage";
-import FournisseurPage from "../pages/user/FournisseurPage";
-import TechnicienPage from "../pages/user/TechnicienPage";
+
+import ProtectedRoute from "./ProtectedRoute";
+
+import AdminLayout from "../modules/admin/components/AdminLayout";
+import StatistiquesPage from "../modules/admin/pages/StatistiquesPage";
+import UsersPage from "../modules/admin/pages/UsersPage";
+
+import ChefDashboard from "../modules/chef/pages/Dashboard";
+import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
+import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
+import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
+import TechnicienDashboard from "../modules/technicien/pages/Dashboard";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Admin — toutes les sous-routes affichent AdminPage (tab géré en interne) */}
-        <Route path="/admin/*" element={<AdminPage />} />
-        <Route path="/chef/*" element={<ChefPage />} />
-        <Route path="/enseignant/*" element={<EnseignantPage />} />
-        <Route path="/responsable/*" element={<ResponsablePage />} />
-        <Route path="/fournisseur/*" element={<FournisseurPage />} />
-        <Route path="/technicien/*" element={<TechnicienPage />} />
+        {/* Administration Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Index route for /admin renders the dashboard/statistics */}
+          <Route index element={<StatistiquesPage />} />
+          <Route path="users" element={<UsersPage />} />
+        </Route>
+
+        <Route
+          path="/chef"
+          element={
+            <ProtectedRoute role="CHEF_DEPARTEMENT">
+              <ChefDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/enseignant"
+          element={
+            <ProtectedRoute role="ENSEIGNANT">
+              <EnseignantDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/responsable"
+          element={
+            <ProtectedRoute role="RESPONSABLE_RESOURCE">
+              <ResponsableDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/fournisseur"
+          element={
+            <ProtectedRoute role="FOURNISSEUR">
+              <FournisseurDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/technicien"
+          element={
+            <ProtectedRoute role="TECHNICIEN">
+              <TechnicienDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
