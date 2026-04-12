@@ -52,9 +52,9 @@ export default function Register() {
 
   const getStrengthClass = (bar: number) => {
     if (bar > strength.level) return "";
-    if (strength.level === 1) return "weak";
-    if (strength.level === 2) return "medium";
-    return "strong";
+    if (strength.level === 1) return "reg-bar-weak";
+    if (strength.level === 2) return "reg-bar-medium";
+    return "reg-bar-strong";
   };
 
   const validate = (): boolean => {
@@ -100,16 +100,43 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="register-container">
-        <div className="register-box">
-          <div className="success-state">
-            <div className="success-icon">✓</div>
-            <h3>Inscription réussie !</h3>
-            <p>
-              Votre compte fournisseur a été créé avec succès.
-              <br />
-              Redirection vers la page de connexion…
-            </p>
+      <div className="reg-page">
+        <div className="reg-shell">
+          <div className="reg-side-panel">
+            <div className="reg-brand-badge">GestRes</div>
+            <div className="reg-brand-block">
+              <h2>Inscription Fournisseur</h2>
+              <p>Accédez aux appels d'offres et gérez vos soumissions facilement.</p>
+            </div>
+            <div className="reg-side-stats">
+              <div className="reg-side-stat">
+                <strong>Rapide</strong>
+                <span>Création de compte en quelques étapes</span>
+              </div>
+              <div className="reg-side-stat">
+                <strong>Sécurisé</strong>
+                <span>Vos accès restent protégés</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="reg-card reg-card--success">
+            <div className="reg-success-state">
+              <div className="reg-success-icon">✓</div>
+              <h3>Inscription réussie !</h3>
+              <p>
+                Votre compte fournisseur a été créé avec succès.
+                <br />
+                Redirection vers la page de connexion…
+              </p>
+              <button
+                type="button"
+                className="reg-submit-btn"
+                onClick={() => navigate("/login")}
+              >
+                Se connecter
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -117,188 +144,213 @@ export default function Register() {
   }
 
   return (
-    <div className="register-container">
-      <div className="register-box">
-        {/* ── HEADER ── */}
-        <div className="register-header">
-          <button className="back-btn" onClick={() => navigate("/login")}>
+    <div className="reg-page">
+      <div className="reg-shell">
+        {/* ── SIDE PANEL ── */}
+        <div className="reg-side-panel">
+          <button
+            type="button"
+            className="reg-back-btn"
+            onClick={() => navigate("/login")}
+          >
             ← Retour à la connexion
           </button>
-          <h2>Inscription Fournisseur</h2>
-          <p>Créez votre compte pour accéder aux appels d'offres</p>
-        </div>
 
-        {/* ── PROGRESS ── */}
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${progressPct}%` }} />
-        </div>
+          <div className="reg-brand-block">
+            <div className="reg-brand-badge">GestRes</div>
+            <h2>Inscription Fournisseur</h2>
+            <p>
+              Créez votre compte pour accéder facilement aux appels d'offres
+              et gérer vos soumissions en toute simplicité.
+            </p>
+          </div>
 
-        {/* ── BODY ── */}
-        <div className="register-body">
-          {error && (
-            <div
-              className="error-msg"
-              style={{
-                background: "#fff1f1",
-                border: "1px solid rgba(220,53,69,0.25)",
-                borderRadius: "8px",
-                color: "#c0392b",
-                fontSize: "0.85rem",
-                padding: "10px 14px",
-                marginBottom: "1rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <span>⚠</span> {error}
+          <div className="reg-side-stats">
+            <div className="reg-side-stat">
+              <strong>Rapide</strong>
+              <span>Création de compte en quelques étapes</span>
             </div>
-          )}
+            <div className="reg-side-stat">
+              <strong>Sécurisé</strong>
+              <span>Vos accès restent protégés</span>
+            </div>
+          </div>
+        </div>
 
-          {/* Société */}
-          <div className="section-label">Informations société</div>
-          <div className="field">
-            <label htmlFor="nomSociete">
-              Nom de la société <span className="required">*</span>
-            </label>
-            <input
-              id="nomSociete"
-              name="nomSociete"
-              placeholder="Ex : TechnoSup SARL"
-              value={form.nomSociete}
-              onChange={handleChange}
-              className={form.nomSociete.trim().length > 1 ? "valid" : ""}
+        {/* ── FORM CARD ── */}
+        <div className="reg-card">
+          <div className="reg-header">
+            <h2>Créer mon compte</h2>
+            <p>Complétez les informations ci-dessous</p>
+          </div>
+
+          <div className="reg-progress-bar">
+            <div
+              className="reg-progress-fill"
+              style={{ width: `${progressPct}%` }}
             />
           </div>
 
-          {/* Identité */}
-          <div className="section-label">Responsable</div>
-          <div className="field-grid">
-            <div className="field">
-              <label htmlFor="nom">
-                Nom <span className="required">*</span>
-              </label>
-              <input
-                id="nom"
-                name="nom"
-                placeholder="Dupont"
-                value={form.nom}
-                onChange={handleChange}
-                className={form.nom.trim().length > 1 ? "valid" : ""}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="prenom">
-                Prénom <span className="required">*</span>
-              </label>
-              <input
-                id="prenom"
-                name="prenom"
-                placeholder="Jean"
-                value={form.prenom}
-                onChange={handleChange}
-                className={form.prenom.trim().length > 1 ? "valid" : ""}
-              />
-            </div>
-
-            <div className="field full">
-              <label htmlFor="reg-email">
-                Email professionnel <span className="required">*</span>
-              </label>
-              <input
-                id="reg-email"
-                name="email"
-                type="email"
-                placeholder="contact@societe.ma"
-                value={form.email}
-                onChange={handleChange}
-                className={form.email.includes("@") ? "valid" : ""}
-              />
-            </div>
-          </div>
-
-          {/* Sécurité */}
-          <div className="section-label">Sécurité du compte</div>
-          <div className="field">
-            <label htmlFor="reg-password">
-              Mot de passe <span className="required">*</span>
-            </label>
-            <div className="input-wrap">
-              <input
-                id="reg-password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Minimum 6 caractères"
-                value={form.password}
-                onChange={handleChange}
-              />
-              <button
-                type="button"
-                className="input-icon-btn"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? "🙈" : "👁"}
-              </button>
-            </div>
-            {form.password && (
-              <div className="password-strength">
-                {[1, 2, 3].map((bar) => (
-                  <div
-                    key={bar}
-                    className={`strength-bar ${getStrengthClass(bar)}`}
-                  />
-                ))}
-                <span className="strength-text">{strength.label}</span>
+          <div className="reg-form-body">
+            {error && (
+              <div className="reg-error-msg">
+                <span>⚠</span>
+                <span>{error}</span>
               </div>
             )}
-          </div>
 
-          <div className="field">
-            <label htmlFor="confirmPassword">
-              Confirmer le mot de passe <span className="required">*</span>
-            </label>
-            <div className="input-wrap">
+            {/* Société */}
+            <div className="reg-section-label">Informations société</div>
+            <div className="reg-field">
+              <label htmlFor="nomSociete">
+                Nom de la société <span className="reg-required">*</span>
+              </label>
               <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirm ? "text" : "password"}
-                placeholder="Répétez le mot de passe"
-                value={form.confirmPassword}
+                id="nomSociete"
+                name="nomSociete"
+                placeholder="Ex : TechnoSup SARL"
+                value={form.nomSociete}
                 onChange={handleChange}
-                className={
-                  form.confirmPassword && form.password === form.confirmPassword
-                    ? "valid"
-                    : form.confirmPassword
-                      ? "error"
-                      : ""
-                }
+                className={form.nomSociete.trim().length > 1 ? "reg-valid" : ""}
               />
-              <button
-                type="button"
-                className="input-icon-btn"
-                onClick={() => setShowConfirm(!showConfirm)}
-              >
-                {showConfirm ? "🙈" : "👁"}
+            </div>
+
+            {/* Responsable */}
+            <div className="reg-section-label">Responsable</div>
+            <div className="reg-field-grid">
+              <div className="reg-field">
+                <label htmlFor="nom">
+                  Nom <span className="reg-required">*</span>
+                </label>
+                <input
+                  id="nom"
+                  name="nom"
+                  placeholder="Dupont"
+                  value={form.nom}
+                  onChange={handleChange}
+                  className={form.nom.trim().length > 1 ? "reg-valid" : ""}
+                />
+              </div>
+
+              <div className="reg-field">
+                <label htmlFor="prenom">
+                  Prénom <span className="reg-required">*</span>
+                </label>
+                <input
+                  id="prenom"
+                  name="prenom"
+                  placeholder="Jean"
+                  value={form.prenom}
+                  onChange={handleChange}
+                  className={form.prenom.trim().length > 1 ? "reg-valid" : ""}
+                />
+              </div>
+
+              <div className="reg-field reg-field--full">
+                <label htmlFor="reg-email">
+                  Email professionnel <span className="reg-required">*</span>
+                </label>
+                <input
+                  id="reg-email"
+                  name="email"
+                  type="email"
+                  placeholder="contact@societe.ma"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={form.email.includes("@") ? "reg-valid" : ""}
+                />
+              </div>
+            </div>
+
+            {/* Sécurité */}
+            <div className="reg-section-label">Sécurité du compte</div>
+
+            <div className="reg-field">
+              <label htmlFor="reg-password">
+                Mot de passe <span className="reg-required">*</span>
+              </label>
+              <div className="reg-input-wrap">
+                <input
+                  id="reg-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Minimum 6 caractères"
+                  value={form.password}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="reg-icon-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Afficher ou masquer le mot de passe"
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
+              </div>
+              {form.password && (
+                <div className="reg-pw-strength">
+                  {[1, 2, 3].map((bar) => (
+                    <div
+                      key={bar}
+                      className={`reg-strength-bar ${getStrengthClass(bar)}`}
+                    />
+                  ))}
+                  <span className="reg-strength-text">{strength.label}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="reg-field">
+              <label htmlFor="confirmPassword">
+                Confirmer le mot de passe <span className="reg-required">*</span>
+              </label>
+              <div className="reg-input-wrap">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Répétez le mot de passe"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  className={
+                    form.confirmPassword && form.password === form.confirmPassword
+                      ? "reg-valid"
+                      : form.confirmPassword
+                        ? "reg-error-input"
+                        : ""
+                  }
+                />
+                <button
+                  type="button"
+                  className="reg-icon-btn"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  aria-label="Afficher ou masquer la confirmation"
+                >
+                  {showConfirm ? "🙈" : "👁"}
+                </button>
+              </div>
+              {form.confirmPassword && form.password !== form.confirmPassword && (
+                <p className="reg-hint reg-hint--error">
+                  Les mots de passe ne correspondent pas
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="reg-submit-btn"
+              onClick={handleRegister}
+              disabled={loading}
+            >
+              {loading ? "Inscription en cours…" : "Créer mon compte"}
+            </button>
+
+            <div className="reg-login-link">
+              Déjà un compte ?
+              <button type="button" onClick={() => navigate("/login")}>
+                Se connecter
               </button>
             </div>
-            {form.confirmPassword && form.password !== form.confirmPassword && (
-              <p className="field-hint error-text">
-                Les mots de passe ne correspondent pas
-              </p>
-            )}
-          </div>
-
-          <button
-            className="btn-register"
-            onClick={handleRegister}
-            disabled={loading}
-          >
-            {loading ? "Inscription en cours…" : "Créer mon compte"}
-          </button>
-
-          <div className="login-link">
-            Déjà un compte ?
-            <button onClick={() => navigate("/login")}>Se connecter</button>
           </div>
         </div>
       </div>

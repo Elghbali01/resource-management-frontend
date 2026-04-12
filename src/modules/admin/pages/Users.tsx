@@ -1,4 +1,3 @@
-// src/modules/admin/pages/Users.tsx
 import DashboardLayout from "../../../components/layout/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 
@@ -12,7 +11,7 @@ export default function UsersPage() {
       prenom={prenom}
       navItems={[
         { label: "Dashboard", path: "/admin", icon: "📊" },
-        { label: "Users", path: "../pages", icon: "👥" },
+        { label: "Users", path: "/admin/users", icon: "👥" },
       ]}
     >
       <h2>Gestion des utilisateurs</h2>

@@ -16,8 +16,8 @@ import {
   userService,
   type UserListResponse,
   type UpdateUserRequest,
+  type CreateUserRequest,
 } from "../services/userService";
-
 
 // ─── Role config ────────────────────────────────────────────────────────────
 
@@ -63,10 +63,205 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
       }`}
     >
       <span
-        className={`w-1.5 h-1.5 rounded-full ${active ? "bg-green-500" : "bg-red-500"}`}
+        className={`w-1.5 h-1.5 rounded-full ${
+          active ? "bg-green-500" : "bg-red-500"
+        }`}
       />
       {active ? "Actif" : "Bloqué"}
     </span>
+  );
+};
+
+// ─── Create Modal ───────────────────────────────────────────────────────────
+
+interface CreateModalProps {
+  onClose: () => void;
+  onCreated: (user: UserListResponse) => void;
+}
+
+const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => {
+  const [form, setForm] = useState<CreateUserRequest>({
+    nom: "",
+    prenom: "",
+    email: "",
+    role: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.nom.trim() || !form.prenom.trim() || !form.email.trim()) {
+      setError("Veuillez remplir tous les champs obligatoires.");
+      return;
+    }
+
+    if (!form.role) {
+      setError("Veuillez sélectionner un rôle.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const created = await userService.create(form);
+      onCreated(created);
+      onClose();
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        "Erreur lors de l'ajout. Vérifiez les informations.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+              <Plus className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">
+                Ajouter un utilisateur
+              </h2>
+              <p className="text-xs text-gray-500">
+                Remplissez les informations ci-dessous
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {error && (
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                Nom <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                value={form.nom}
+                onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                required
+                placeholder="Dupont"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                Prénom <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                value={form.prenom}
+                onChange={(e) => setForm({ ...form, prenom: e.target.value })}
+                required
+                placeholder="Jean"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+              Email professionnel <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+              placeholder="contact@gestres.ma"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+              Rôle <span className="text-red-400">*</span>
+            </label>
+            <div className="relative">
+              <select
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
+                required
+                className="appearance-none w-full px-3 pr-8 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer text-gray-700 bg-white"
+              >
+                <option value="">Sélectionner un rôle…</option>
+                {ALL_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {ROLE_LABELS[r]}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors"
+            >
+              {loading ? (
+                <svg
+                  className="animate-spin w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  />
+                </svg>
+              ) : (
+                <Check className="w-4 h-4" />
+              )}
+              {loading ? "Ajout en cours…" : "Ajouter"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 
@@ -104,7 +299,6 @@ const EditModal: React.FC<EditModalProps> = ({ user, onClose, onSaved }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
@@ -127,7 +321,6 @@ const EditModal: React.FC<EditModalProps> = ({ user, onClose, onSaved }) => {
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {error && (
             <div className="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -303,17 +496,15 @@ const UsersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filters
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
 
-  // Modals
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [editUser, setEditUser] = useState<UserListResponse | null>(null);
   const [deleteUser, setDeleteUser] = useState<UserListResponse | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
 
@@ -321,13 +512,11 @@ const UsersPage: React.FC = () => {
     setCurrentPage(1);
   }, [search, selectedRole]);
 
-  // ── Fetch ──
   const fetchUsers = async () => {
     setLoading(true);
     setError("");
     try {
       const data = await userService.getAll();
-      // Exclude ADMIN role
       setUsers(data.filter((u) => u.role !== "ADMIN"));
     } catch {
       setError("Impossible de charger les utilisateurs.");
@@ -340,7 +529,6 @@ const UsersPage: React.FC = () => {
     fetchUsers();
   }, []);
 
-  // ── Filtered list ──
   const filtered = useMemo(() => {
     return users.filter((u) => {
       const q = search.toLowerCase();
@@ -362,7 +550,11 @@ const UsersPage: React.FC = () => {
     );
   }, [filtered, currentPage]);
 
-  // ── Actions ──
+  const handleCreated = (newUser: UserListResponse) => {
+    setUsers((prev) => [newUser, ...prev]);
+    setShowCreateModal(false);
+  };
+
   const handleEditSaved = (updated: UserListResponse) => {
     setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
     setEditUser(null);
@@ -394,22 +586,18 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  // ── Stats ──
   const stats = useMemo(() => {
     const total = users.length;
     const actifs = users.filter(
       (u) =>
         u.status?.toUpperCase() === "ACTIF" ||
-        u.status?.toUpperCase() === "ACTIVE",
+        u.status?.toUpperCase() === "ACTIVE"
     ).length;
     return { total, actifs, bloques: total - actifs };
   }, [users]);
 
-  // ─────────────────────────────────────────────────────────────────────────
-
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
-      {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm">
@@ -429,18 +617,14 @@ const UsersPage: React.FC = () => {
 
         <button
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-sm"
-          onClick={() => {
-            /* modal à venir */
-          }}
+          onClick={() => setShowCreateModal(true)}
         >
           <Plus className="w-4 h-4" />
           Ajouter un utilisateur
         </button>
       </div>
 
-      {/* ── Filters ── */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        {/* Search */}
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -460,7 +644,6 @@ const UsersPage: React.FC = () => {
           )}
         </div>
 
-        {/* Role filter */}
         <div className="relative">
           <select
             value={selectedRole}
@@ -478,7 +661,6 @@ const UsersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Table ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -597,7 +779,6 @@ const UsersPage: React.FC = () => {
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-1.5">
-                          {/* Edit */}
                           <button
                             onClick={() => setEditUser(user)}
                             title="Modifier"
@@ -606,7 +787,6 @@ const UsersPage: React.FC = () => {
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
 
-                          {/* Block / Unblock */}
                           <button
                             onClick={() => handleToggle(user)}
                             disabled={isToggling}
@@ -644,7 +824,6 @@ const UsersPage: React.FC = () => {
                             )}
                           </button>
 
-                          {/* Delete */}
                           <button
                             onClick={() => setDeleteUser(user)}
                             title="Supprimer"
@@ -660,11 +839,15 @@ const UsersPage: React.FC = () => {
               </tbody>
             </table>
 
-            {/* Footer count & pagination */}
             <div className="px-5 py-3 border-t border-gray-50 bg-gray-50/40 flex items-center justify-between flex-wrap gap-3">
               <p className="text-xs text-gray-500 font-medium">
-                Affichage de {filtered.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} à{" "}
-                {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} sur <span className="font-bold">{filtered.length}</span> résultat{filtered.length > 1 ? "s" : ""}
+                Affichage de{" "}
+                {filtered.length === 0
+                  ? 0
+                  : (currentPage - 1) * ITEMS_PER_PAGE + 1}{" "}
+                à {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} sur{" "}
+                <span className="font-bold">{filtered.length}</span> résultat
+                {filtered.length > 1 ? "s" : ""}
               </p>
 
               {totalPages > 1 && (
@@ -680,7 +863,9 @@ const UsersPage: React.FC = () => {
                     Page {currentPage} sur {totalPages}
                   </span>
                   <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                   >
@@ -693,7 +878,13 @@ const UsersPage: React.FC = () => {
         )}
       </div>
 
-      {/* ── Modals ── */}
+      {showCreateModal && (
+        <CreateModal
+          onClose={() => setShowCreateModal(false)}
+          onCreated={handleCreated}
+        />
+      )}
+
       {editUser && (
         <EditModal
           user={editUser}
@@ -715,3 +906,4 @@ const UsersPage: React.FC = () => {
 };
 
 export default UsersPage;
+//blaan
