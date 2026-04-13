@@ -20,6 +20,7 @@ import {
 } from "../services/userService";
 import { ROLES } from "../../../utils/roles";
 import api from "../../../services/api";
+import { departementService } from "../services/departementService";
 
 interface Departement {
   id: number;
@@ -562,7 +563,7 @@ const UsersPage: React.FC = () => {
     try {
       const [usersData, deptsData] = await Promise.all([
         userService.getAll(),
-        api.get<Departement[]>("/departements").then((r) => r.data).catch(() => [])
+        departementService.getAll().catch(() => [])
       ]);
       setUsers(usersData.filter((u) => u.role !== "ADMIN"));
       setDepartements(deptsData);
