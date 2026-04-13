@@ -14,6 +14,7 @@ interface SidebarProps {
   nom: string;
   prenom: string;
   navItems: NavItem[];
+  subTitle?: string;
 }
 
 const roleLabels: Record<string, string> = {
@@ -25,7 +26,7 @@ const roleLabels: Record<string, string> = {
   TECHNICIEN: "Technicien",
 };
 
-export default function Sidebar({ role, nom, prenom, navItems }: SidebarProps) {
+export default function Sidebar({ role, nom, prenom, navItems, subTitle }: SidebarProps) {
   const navigate = useNavigate();
 
   const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase();
@@ -42,7 +43,7 @@ export default function Sidebar({ role, nom, prenom, navItems }: SidebarProps) {
         <div className="sidebar-logo">🎓</div>
         <div className="sidebar-brand-text">
           <span className="sidebar-brand-name">GestRes</span>
-          <span className="sidebar-brand-sub">{roleLabels[role] ?? role}</span>
+          <span className="sidebar-brand-sub">{subTitle || roleLabels[role] || role}</span>
         </div>
       </div>
 

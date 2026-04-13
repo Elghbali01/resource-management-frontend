@@ -7,6 +7,7 @@ interface Props {
   prenom: string;
   navItems: NavItem[];
   children: React.ReactNode;
+  subTitle?: string;
 }
 
 export default function DashboardLayout({
@@ -15,10 +16,11 @@ export default function DashboardLayout({
   prenom,
   navItems,
   children,
+  subTitle,
 }: Props) {
   return (
     <div className="admin-layout">
-      <Sidebar role={role} nom={nom} prenom={prenom} navItems={navItems} />
+      <Sidebar role={role} nom={nom} prenom={prenom} navItems={navItems} subTitle={subTitle} />
       <main className="admin-main">{children}</main>
     </div>
   );

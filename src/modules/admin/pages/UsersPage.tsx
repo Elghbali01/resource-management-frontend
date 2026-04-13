@@ -19,7 +19,6 @@ import {
   type CreateUserRequest,
 } from "../services/userService";
 import { ROLES } from "../../../utils/roles";
-import api from "../../../services/api";
 import { departementService } from "../services/departementService";
 
 interface Departement {
