@@ -18,6 +18,13 @@ import {
   type UpdateUserRequest,
   type CreateUserRequest,
 } from "../services/userService";
+import { ROLES } from "../../../utils/roles";
+import api from "../../../services/api";
+
+interface Departement {
+  id: number;
+  nom: string;
+}
 
 // ─── Role config ────────────────────────────────────────────────────────────
 
@@ -77,14 +84,16 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 interface CreateModalProps {
   onClose: () => void;
   onCreated: (user: UserListResponse) => void;
+  departements: Departement[];
 }
 
-const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => {
+const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated, departements }) => {
   const [form, setForm] = useState<CreateUserRequest>({
     nom: "",
     prenom: "",
     email: "",
     role: "",
+    departementId: undefined,
   });
 
   const [loading, setLoading] = useState(false);
@@ -103,11 +112,21 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => {
       return;
     }
 
+    if ((form.role === "ENSEIGNANT" || form.role === "CHEF_DEPARTEMENT") && !form.departementId) {
+      setError("Veuillez sélectionner un département.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      const created = await userService.create(form);
+      const payload = { ...form };
+      if (payload.role !== "ENSEIGNANT" && payload.role !== "CHEF_DEPARTEMENT") {
+        delete payload.departementId;
+      }
+      
+      const created = await userService.create(payload);
       onCreated(created);
       onClose();
     } catch (err: any) {
@@ -210,7 +229,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => {
                 className="appearance-none w-full px-3 pr-8 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer text-gray-700 bg-white"
               >
                 <option value="">Sélectionner un rôle…</option>
-                {ALL_ROLES.map((r) => (
+                {ALL_ROLES.filter((r) => r !== ROLES.FOURNISSEUR).map((r) => (
                   <option key={r} value={r}>
                     {ROLE_LABELS[r]}
                   </option>
@@ -219,6 +238,30 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose, onCreated }) => {
               <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
           </div>
+
+          {(form.role === "ENSEIGNANT" || form.role === "CHEF_DEPARTEMENT") && (
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                Département <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  value={form.departementId || ""}
+                  onChange={(e) => setForm({ ...form, departementId: Number(e.target.value) })}
+                  required
+                  className="appearance-none w-full px-3 pr-8 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer text-gray-700 bg-white"
+                >
+                  <option value="">Sélectionner un département…</option>
+                  {departements.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.nom}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <button
@@ -493,6 +536,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<UserListResponse[]>([]);
+  const [departements, setDepartements] = useState<Departement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -512,21 +556,25 @@ const UsersPage: React.FC = () => {
     setCurrentPage(1);
   }, [search, selectedRole]);
 
-  const fetchUsers = async () => {
+  const fetchData = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await userService.getAll();
-      setUsers(data.filter((u) => u.role !== "ADMIN"));
+      const [usersData, deptsData] = await Promise.all([
+        userService.getAll(),
+        api.get<Departement[]>("/departements").then((r) => r.data).catch(() => [])
+      ]);
+      setUsers(usersData.filter((u) => u.role !== "ADMIN"));
+      setDepartements(deptsData);
     } catch {
-      setError("Impossible de charger les utilisateurs.");
+      setError("Impossible de charger les données.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchData();
   }, []);
 
   const filtered = useMemo(() => {
@@ -694,7 +742,7 @@ const UsersPage: React.FC = () => {
             </div>
             <p className="text-sm text-red-600">{error}</p>
             <button
-              onClick={fetchUsers}
+              onClick={fetchData}
               className="text-sm text-blue-600 hover:underline"
             >
               Réessayer
@@ -882,6 +930,7 @@ const UsersPage: React.FC = () => {
         <CreateModal
           onClose={() => setShowCreateModal(false)}
           onCreated={handleCreated}
+          departements={departements}
         />
       )}
 
@@ -906,4 +955,3 @@ const UsersPage: React.FC = () => {
 };
 
 export default UsersPage;
-//blaan
