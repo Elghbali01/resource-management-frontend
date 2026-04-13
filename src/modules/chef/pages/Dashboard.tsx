@@ -1,178 +1,65 @@
 // src/modules/chef/pages/Dashboard.tsx
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DashboardLayout from "../../../components/layout/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
-import "../../admin/pages/StatistiquesPage.css"; // Reuse the same CSS
+import { Plus, Megaphone, Calendar, DollarSign, Check, X, Pencil, Send, CheckCircle2, User, Monitor, Printer, AlertTriangle } from "lucide-react";
 
-/* ── Animated counter hook ────────────────────── */
-function useCountUp(target: number, duration = 1200) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (target === 0) return;
-    let start = 0;
-    const step = Math.ceil(target / (duration / 16));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) { setValue(target); clearInterval(timer); }
-      else setValue(start);
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target, duration]);
-  return value;
-}
+// --- Types ---
+type Campagne = { id: string; nom: string; budget: number; dateFin: string; status: "EN_COLLECTE" | "CLOTUREE" };
+type Besoin = { id: string; enseignant: string; type: string; specs: string; qte: number; prixEstime: number; status: "EN_ATTENTE" | "VALIDE" | "REJETE" };
 
-/* ── Mini sparkline (SVG path) ───────────────── */
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  if (!data.length) return null;
-  const w = 120, h = 40;
-  const max = Math.max(...data, 1);
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * w;
-    const y = h - (v / max) * h;
-    return `${x},${y}`;
-  }).join(" ");
-  const area = `M${pts.split(" ").join("L")} L${w},${h} L0,${h} Z`;
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: "visible" }}>
-      <defs>
-        <linearGradient id={`sg-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={area} fill={`url(#sg-${color.replace("#", "")})`} />
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+// --- Mock Data ---
+const initialCampagnes: Campagne[] = [
+  { id: "1", nom: "Campagne d'Achat - Trimestre 1", budget: 60000, dateFin: "2026-05-30", status: "EN_COLLECTE" },
+];
 
-/* ── Donut chart ─────────────────────────────── */
-function DonutChart({ roles }: { roles: any[] }) {
-  const size = 160, stroke = 28, r = (size - stroke) / 2;
-  const circ = 2 * Math.PI * r;
-  let offset = 0;
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={stroke} />
-      {roles.map((role) => {
-        const dash = (role.pct / 100) * circ;
-        const gap = circ - dash;
-        const rotation = -90 + (offset / 100) * 360;
-        offset += role.pct;
-        return (
-          <circle
-            key={role.label}
-            cx={size / 2}
-            cy={size / 2}
-            r={r}
-            fill="none"
-            stroke={role.color}
-            strokeWidth={stroke}
-            strokeDasharray={`${dash} ${gap}`}
-            strokeDashoffset={0}
-            transform={`rotate(${rotation} ${size / 2} ${size / 2})`}
-            style={{ transition: "stroke-dasharray 1s ease" }}
-          />
-        );
-      })}
-      <text x={size / 2} y={size / 2 - 6} textAnchor="middle" fill="white" fontSize="22" fontWeight="700">
-        {roles.reduce((a, r) => a + r.count, 0)}
-      </text>
-      <text x={size / 2} y={size / 2 + 16} textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="11">
-        ressources
-      </text>
-    </svg>
-  );
-}
-
-/* ── Bar chart horizontal ────────────────────── */
-function HorizontalBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
-  const pct = max > 0 ? Math.round((value / max) * 100) : 0;
-  return (
-    <div className="stat-hbar">
-      <div className="stat-hbar-meta">
-        <span className="stat-hbar-label">{label}</span>
-        <span className="stat-hbar-value">{value}</span>
-      </div>
-      <div className="stat-hbar-track">
-        <div className="stat-hbar-fill" style={{ width: `${pct}%`, background: color }} />
-      </div>
-    </div>
-  );
-}
-
-/* ── KPI Card ──────────────────────────────────── */
-function KpiCard({
-  label, value, icon, color, trend, trendUp, spark, loading,
-}: {
-  label: string; value: number; icon: React.ReactNode; color: string;
-  trend: string; trendUp: boolean; spark: React.ReactNode; loading: boolean;
-}) {
-  return (
-    <div className="sp-kpi-card">
-      <div className="sp-kpi-top">
-        <div className="sp-kpi-icon" style={{ background: `${color}20`, color }}>
-          {icon}
-        </div>
-        <span className={`sp-kpi-trend ${trendUp ? "sp-kpi-trend--up" : "sp-kpi-trend--warn"}`}>
-          {trend}
-        </span>
-      </div>
-      <div className="sp-kpi-value">
-        {loading ? <div className="sp-skeleton sp-skeleton--number" /> : value}
-      </div>
-      <div className="sp-kpi-label">{label}</div>
-      <div className="sp-kpi-spark">{!loading && spark}</div>
-    </div>
-  );
-}
-
-// Icons
-const IconBox = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line>
-  </svg>
-);
-const IconCheck = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-);
-const IconClock = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-  </svg>
-);
-const IconAlert = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>
-  </svg>
-);
-
+const initialBesoins: Besoin[] = [
+  { id: "b1", enseignant: "Jean Dupont", type: "ORDINATEUR", specs: "i7, 16GB RAM, 512GB SSD", qte: 1, prixEstime: 12000, status: "EN_ATTENTE" },
+  { id: "b2", enseignant: "Claire Martin", type: "IMPRIMANTE", specs: "Laser Couleur", qte: 2, prixEstime: 5000, status: "VALIDE" },
+  { id: "b3", enseignant: "Luc Bernard", type: "ORDINATEUR", specs: "i5, 8GB RAM", qte: 5, prixEstime: 45000, status: "EN_ATTENTE" },
+];
 
 export default function ChefDashboard() {
   const { nom, prenom } = useAuth();
   
-  // Static stats values for Chef
-  const stats = {
-    totalBesoins: 45,
-    besoinsValides: 28,
-    besoinsEnAttente: 12,
-    incidentsSignales: 5,
-    enseignants: 18,
-    equipements: 124,
+  // --- States ---
+  const [activeTab, setActiveTab] = useState<"CAMPAGNES" | "VALIDATION">("CAMPAGNES");
+  
+  const [campagnes, setCampagnes] = useState<Campagne[]>(initialCampagnes);
+  const [besoins, setBesoins] = useState<Besoin[]>(initialBesoins);
+  
+  // Modal states for creating campaign
+  const [showModal, setShowModal] = useState(false);
+  const [formNom, setFormNom] = useState("");
+  const [formBudget, setFormBudget] = useState("");
+  const [formDate, setFormDate] = useState("");
+
+  const [transmitted, setTransmitted] = useState(false);
+
+  // --- Actions ---
+  const handleLaunchCampaign = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newCampagne: Campagne = {
+      id: Math.random().toString(),
+      nom: formNom,
+      budget: Number(formBudget),
+      dateFin: formDate,
+      status: "EN_COLLECTE",
+    };
+    setCampagnes([newCampagne, ...campagnes]);
+    setShowModal(false);
+    setFormNom(""); setFormBudget(""); setFormDate("");
   };
 
-  const animTotalBesoins = useCountUp(stats.totalBesoins);
-  const animBesoinsValides = useCountUp(stats.besoinsValides);
-  const animEnAttente = useCountUp(stats.besoinsEnAttente);
-  const animIncidents = useCountUp(stats.incidentsSignales);
+  const updateBesoinStatus = (id: string, newStatus: Besoin["status"]) => {
+    setBesoins(besoins.map(b => b.id === id ? { ...b, status: newStatus } : b));
+  };
 
-  const roles = [
-    { label: "Ordinateurs", count: 85, color: "#3b82f6", pct: Math.round((85/124)*100) },
-    { label: "Imprimantes", count: 15, color: "#10b981", pct: Math.round((15/124)*100) },
-    { label: "Vidéoprojecteurs", count: 24, color: "#f59e0b", pct: Math.round((24/124)*100) },
+  const currentBudget = campagnes[0]?.budget || 0;
+  const totalValide = besoins.filter(b => b.status === "VALIDE").reduce((acc, curr) => acc + curr.prixEstime, 0);
+
+  const navItems = [
+    { label: "Dashboard", path: "/chef", icon: "📊" },
   ];
 
   return (
@@ -180,158 +67,227 @@ export default function ChefDashboard() {
       role="CHEF_DEPARTEMENT"
       nom={nom}
       prenom={prenom}
-      navItems={[
-        { label: "Dashboard", path: "/chef", icon: "📊" },
-        { label: "Besoins", path: "/chef/besoins", icon: "📦" },
-      ]}
+      navItems={navItems}
     >
-      <div className="sp-root">
-        {/* ── Background orbs ── */}
-        <div className="sp-bg">
-          <div className="sp-orb sp-orb1" />
-          <div className="sp-orb sp-orb2" />
-          <div className="sp-orb sp-orb3" />
-          <div className="sp-grid" />
+      <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+        
+        {/* Vue d'ensemble Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Espace Chef de Département</h1>
+          <p className="text-sm text-gray-500 mt-1">Gérez le budget, lancez la collecte et validez les besoins (Réunion de concertation).</p>
         </div>
 
-        <div className="sp-content">
-          {/* Header */}
-          <header className="sp-header">
-            <div>
-              <div className="sp-header-eyebrow">
-                <span className="sp-pulse-dot" />
-                Tableau de bord
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200 mb-6">
+          <button
+            onClick={() => setActiveTab("CAMPAGNES")}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === "CAMPAGNES" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          >
+            Budget & Collecte
+          </button>
+          <button
+            onClick={() => setActiveTab("VALIDATION")}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === "VALIDATION" ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          >
+            Réunion de Concertation (Validation)
+          </button>
+        </div>
+
+        {/* --- TAB 1 : BUDGET ET COLLECTE --- */}
+        {activeTab === "CAMPAGNES" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                  <Megaphone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Demander les besoins</h2>
+                  <p className="text-sm text-gray-500">Demandez aux enseignants d'envoyer leurs besoins matériels.</p>
+                </div>
               </div>
-              <h1 className="sp-title">Statistiques du Département</h1>
-              <p className="sp-subtitle">Vue globale des ressources et besoins de votre département</p>
-            </div>
-            <div className="sp-header-actions">
-              <button className="sp-refresh-btn" onClick={() => {}} >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16" />
-                </svg>
-                Actualiser
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition"
+              >
+                <Plus className="w-4 h-4" /> Nouvelle Campagne
               </button>
             </div>
-          </header>
 
-          {/* KPI */}
-          <div className="sp-kpi-grid">
-            <KpiCard
-              label="Besoins Exprimés"
-              value={animTotalBesoins}
-              icon={<IconBox />}
-              color="#3b82f6"
-              trend="Ce mois"
-              trendUp={true}
-              spark={<Sparkline data={[2, 5, 8, 12, 14, 25, stats.totalBesoins]} color="#3b82f6" />}
-              loading={false}
-            />
-            <KpiCard
-              label="Besoins Validés"
-              value={animBesoinsValides}
-              icon={<IconCheck />}
-              color="#10b981"
-              trend={`${Math.round((stats.besoinsValides / stats.totalBesoins) * 100)}%`}
-              trendUp={true}
-              spark={<Sparkline data={[1, 3, 6, 8, 10, 18, stats.besoinsValides]} color="#10b981" />}
-              loading={false}
-            />
-            <KpiCard
-              label="En attente"
-              value={animEnAttente}
-              icon={<IconClock />}
-              color="#f59e0b"
-              trend="Traitement"
-              trendUp={false}
-              spark={<Sparkline data={[5, 7, 6, 8, 10, 11, stats.besoinsEnAttente]} color="#f59e0b" />}
-              loading={false}
-            />
-            <KpiCard
-              label="Incidents signalés"
-              value={animIncidents}
-              icon={<IconAlert />}
-              color="#e85d26"
-              trend="Urgent"
-              trendUp={false}
-              spark={<Sparkline data={[0, 1, 0, 2, 1, 3, stats.incidentsSignales]} color="#e85d26" />}
-              loading={false}
-            />
-          </div>
-
-          <div className="sp-charts-row">
-            {/* Donut */}
-            <div className="sp-card sp-card--donut">
-              <div className="sp-card-header">
-                <h2 className="sp-card-title">Ressources allouées</h2>
-                <span className="sp-card-badge">{stats.equipements} au total</span>
-              </div>
-              <div className="sp-donut-wrap">
-                <DonutChart roles={roles} />
-                <div className="sp-donut-legend">
-                  {roles.map((r) => (
-                    <div key={r.label} className="sp-legend-item">
-                      <span className="sp-legend-dot" style={{ background: r.color }} />
-                      <span className="sp-legend-label">{r.label}</span>
-                      <span className="sp-legend-count">{r.count}</span>
-                      <span className="sp-legend-pct">{r.pct}%</span>
-                    </div>
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mt-4">Historique des Campagnes de Collecte</h3>
+            
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-100">
+                  <tr>
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Intitulé</th>
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date Limite</th>
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Budget Alloué</th>
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Statut</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {campagnes.map((c) => (
+                    <tr key={c.id} className="hover:bg-gray-50/50">
+                      <td className="px-5 py-4 text-sm font-medium text-gray-900">{c.nom}</td>
+                      <td className="px-5 py-4 text-sm text-gray-600 flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gray-400" /> {new Date(c.dateFin).toLocaleDateString("fr-FR")}
+                      </td>
+                      <td className="px-5 py-4 text-sm font-bold text-gray-900">{c.budget.toLocaleString()} DHS</td>
+                      <td className="px-5 py-4">
+                        <span className="px-2.5 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg">
+                          {c.status === "EN_COLLECTE" ? "En Collecte" : "Clôturée"}
+                        </span>
+                      </td>
+                    </tr>
                   ))}
-                </div>
-              </div>
+                  {campagnes.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-gray-500">Aucune campagne lancée.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            {/* Bars */}
-            <div className="sp-card sp-card--bars">
-              <div className="sp-card-header">
-                <h2 className="sp-card-title">État des demandes</h2>
-                <span className="sp-card-badge">{stats.totalBesoins} requêtes</span>
-              </div>
-              <div className="sp-bars-wrap">
-                <HorizontalBar label="Validées" value={stats.besoinsValides} max={stats.totalBesoins} color="#10b981" />
-                <HorizontalBar label="En attente" value={stats.besoinsEnAttente} max={stats.totalBesoins} color="#f59e0b" />
-                <HorizontalBar label="Rejetées" value={stats.totalBesoins - stats.besoinsValides - stats.besoinsEnAttente} max={stats.totalBesoins} color="#e85d26" />
-              </div>
-              <div className="sp-status-pills">
-                <div className="sp-status-pill sp-status-pill--green">
-                  <span>{stats.besoinsValides}</span> Validées
-                </div>
-                <div className="sp-status-pill sp-status-pill--amber">
-                  <span>{stats.besoinsEnAttente}</span> En attente
-                </div>
-                <div className="sp-status-pill sp-status-pill--gray" style={{ background: 'rgba(232,93,38,0.12)', color: '#fb923c' }}>
-                  <span>{stats.totalBesoins - stats.besoinsValides - stats.besoinsEnAttente}</span> Rejetées
-                </div>
-              </div>
-            </div>
-
-            {/* List */}
-            <div className="sp-card sp-card--list">
-              <div className="sp-card-header">
-                <h2 className="sp-card-title">Dernières requêtes d'enseignants</h2>
-                <span className="sp-card-badge">{stats.enseignants} total</span>
-              </div>
-              <div className="sp-user-list">
-                {[
-                  { id: 1, nom: "Dupont", prenom: "Jean", email: "jean.dupont@univ.fr", role: "ENSEIGNANT", request: "Ordinateur Portable" },
-                  { id: 2, nom: "Martin", prenom: "Claire", email: "claire.martin@univ.fr", role: "ENSEIGNANT", request: "Imprimante A4" },
-                  { id: 3, nom: "Bernard", prenom: "Luc", email: "luc.bernard@univ.fr", role: "ENSEIGNANT", request: "Vidéoprojecteur" },
-                  { id: 4, nom: "Robert", prenom: "Sophie", email: "sophie.robert@univ.fr", role: "ENSEIGNANT", request: "Écran 27\"" },
-                ].map((u) => (
-                  <div key={u.id} className="sp-user-row">
-                    <div className="sp-user-avatar" style={{ background: "#64748b" }}>
-                      {u.prenom[0]}{u.nom[0]}
-                    </div>
-                    <div className="sp-user-info">
-                      <span className="sp-user-name">{u.prenom} {u.nom}</span>
-                      <span className="sp-user-email">{u.request}</span>
-                    </div>
+            {/* MODAL NOUVELLE CAMPAGNE */}
+            {showModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h2 className="text-base font-semibold text-gray-900">Lancer une collecte</h2>
+                    <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5"/></button>
                   </div>
-                ))}
+                  <form onSubmit={handleLaunchCampaign} className="p-6 space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Nom de la campagne</label>
+                      <input type="text" required value={formNom} onChange={(e)=>setFormNom(e.target.value)} placeholder="Ex: Besoins 2026" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Date limite de soumission</label>
+                      <input type="date" required value={formDate} onChange={(e)=>setFormDate(e.target.value)} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Budget alloué au département (DHS)</label>
+                      <input type="number" required value={formBudget} onChange={(e)=>setFormBudget(e.target.value)} placeholder="Ex: 50000" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
+                    </div>
+                    <button type="submit" className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition">Valider et Lancer</button>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* --- TAB 2 : VALIDATION ET TRANSMISSION --- */}
+        {activeTab === "VALIDATION" && (
+          <div className="space-y-6">
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <p className="text-sm text-gray-500 font-medium tracking-wide">Budget Alloué</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{currentBudget.toLocaleString()} DHS</p>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <p className="text-sm text-gray-500 font-medium tracking-wide">Dépenses Estimées (Validées)</p>
+                <p className={`text-2xl font-bold mt-1 ${totalValide > currentBudget ? "text-red-600" : "text-blue-600"}`}>
+                  {totalValide.toLocaleString()} DHS
+                </p>
+                {totalValide > currentBudget && <p className="text-xs text-red-500 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3"/> Dépassement</p>}
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center">
+                 <button
+                   disabled={transmitted || totalValide === 0}
+                   onClick={() => setTransmitted(true)}
+                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-white shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed bg-green-600 hover:bg-green-700"
+                 >
+                   {transmitted ? <CheckCircle2 className="w-5 h-5"/> : <Send className="w-5 h-5"/>}
+                   {transmitted ? "Transmission Envoyée" : "Transmettre au Responsable"}
+                 </button>
+                 <p className="text-xs text-center text-gray-500 mt-2">Génère un appel d'offre global.</p>
               </div>
             </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                <h3 className="font-semibold text-gray-800">Requêtes des Enseignants</h3>
+                <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full font-medium">{besoins.length} demandes</span>
+              </div>
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-white border-b border-gray-100">
+                    <tr>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Enseignant</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Besoin</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Prix Estimé</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Statut</th>
+                      <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {besoins.map((b) => (
+                      <tr key={b.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center flex-shrink-0">
+                              <User className="w-4 h-4" />
+                            </div>
+                            <span className="text-sm font-medium text-gray-900">{b.enseignant}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-start gap-3">
+                            <div className="p-1.5 mt-0.5 bg-gray-100 rounded-lg">
+                              {b.type === "ORDINATEUR" ? <Monitor className="w-4 h-4 text-gray-600"/> : <Printer className="w-4 h-4 text-gray-600"/>}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">{b.qte}x {b.type}</p>
+                              <p className="text-xs text-gray-500">{b.specs}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4 text-sm font-semibold text-gray-900">
+                          {b.prixEstime.toLocaleString()} DHS
+                        </td>
+                        <td className="px-5 py-4">
+                          {b.status === "VALIDE" && <span className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-md text-xs font-medium border border-green-200"><CheckCircle2 className="w-3.5 h-3.5"/> Validé</span>}
+                          {b.status === "REJETE" && <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 px-2.5 py-1 rounded-md text-xs font-medium border border-red-200"><X className="w-3.5 h-3.5"/> Rejeté</span>}
+                          {b.status === "EN_ATTENTE" && <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-xs font-medium border border-amber-200">En attente</span>}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              disabled={transmitted || b.status === "VALIDE"}
+                              onClick={() => updateBesoinStatus(b.id, "VALIDE")}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-600 hover:bg-green-50 disabled:opacity-30 transition"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              disabled={transmitted || b.status === "REJETE"}
+                              onClick={() => updateBesoinStatus(b.id, "REJETE")}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-30 transition"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <button
+                              disabled={transmitted}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30 transition"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
           </div>
-        </div>
+        )}
+
       </div>
     </DashboardLayout>
   );

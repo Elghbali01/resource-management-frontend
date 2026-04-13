@@ -8,6 +8,7 @@ import {
   X,
   Check,
   AlertTriangle,
+  DollarSign,
 } from "lucide-react";
 import {
   departementService,
@@ -291,6 +292,95 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ departement, onClose, onConfi
   </div>
 );
 
+// ─── Add Budget Modal ────────────────────────────────────────────────────────
+
+interface AddBudgetModalProps {
+  departement: DepartementResponse;
+  onClose: () => void;
+  onSaved: (dept: DepartementResponse) => void;
+}
+
+const AddBudgetModal: React.FC<AddBudgetModalProps> = ({ departement, onClose, onSaved }) => {
+  const [montant, setMontant] = useState<number | "">("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!montant || montant <= 0) {
+      setError("Le montant doit être supérieur à 0.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const updated = await departementService.ajouterBudget(departement.id, Number(montant));
+      onSaved(updated);
+      onClose();
+    } catch (err: any) {
+      const message = err?.response?.data?.message || "Erreur lors de l'ajout du budget.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">Ajouter un Budget</h2>
+              <p className="text-xs text-gray-500">{departement.nom}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {error && (
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              {error}
+            </div>
+          )}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+              Montant supplémentaire <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={montant}
+              onChange={(e) => setMontant(e.target.value === "" ? "" : Number(e.target.value))}
+              required
+              placeholder="Ex: 5000"
+              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              Annuler
+            </button>
+            <button type="submit" disabled={loading} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 disabled:opacity-60 transition-colors">
+              {loading ? (
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>
+              ) : <Check className="w-4 h-4" />}
+              {loading ? "En cours…" : "Ajouter"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 const DepartementsPage: React.FC = () => {
@@ -304,6 +394,8 @@ const DepartementsPage: React.FC = () => {
   const [deleteDept, setDeleteDept] = useState<DepartementResponse | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+
+  const [budgetDept, setBudgetDept] = useState<DepartementResponse | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
@@ -480,6 +572,9 @@ const DepartementsPage: React.FC = () => {
                   <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3.5">
                     Enseignants
                   </th>
+                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3.5">
+                    Budget (MAD)
+                  </th>
                   <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3.5">
                     Actions
                   </th>
@@ -521,7 +616,19 @@ const DepartementsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-5 py-4">
+                      <span className="font-semibold text-sm text-gray-900">
+                        {dept.budget != null ? Number(dept.budget).toLocaleString("fr-FR", { minimumFractionDigits: 2 }) : "0,00"} 
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
                       <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setBudgetDept(dept)}
+                          title="Ajouter Budget"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-orange-600 hover:bg-orange-50 transition-all"
+                        >
+                          <DollarSign className="w-3.5 h-3.5" />
+                        </button>
                         <button
                           onClick={() => setEditDept(dept)}
                           title="Modifier"
@@ -610,6 +717,14 @@ const DepartementsPage: React.FC = () => {
           onConfirm={handleDelete}
           loading={deleteLoading}
           error={deleteError}
+        />
+      )}
+
+      {budgetDept && (
+        <AddBudgetModal
+          departement={budgetDept}
+          onClose={() => setBudgetDept(null)}
+          onSaved={handleEditSaved}
         />
       )}
     </div>

@@ -11,6 +11,7 @@ import UsersPage from "../modules/admin/pages/UsersPage";
 import DepartementsPage from "../modules/admin/pages/DepartementsPage";
 
 import ChefDashboard from "../modules/chef/pages/Dashboard";
+
 import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
 import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
@@ -40,6 +41,7 @@ export default function AppRoutes() {
           <Route path="departements" element={<DepartementsPage />} />
         </Route>
 
+        {/* Chef de Département Routes */}
         <Route
           path="/chef"
           element={

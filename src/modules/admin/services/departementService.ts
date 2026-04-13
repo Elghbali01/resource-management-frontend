@@ -3,6 +3,7 @@ import api from "../../../services/api";
 export interface DepartementResponse {
   id: number;
   nom: string;
+  budget?: number;
   chefNom: string | null;
   chefPrenom: string | null;
   chefEmail: string | null;
@@ -30,4 +31,7 @@ export const departementService = {
 
   delete: (id: number): Promise<{ message: string }> =>
     api.delete(`${BASE}/${id}`).then((r) => r.data),
+
+  ajouterBudget: (id: number, montant: number): Promise<DepartementResponse> =>
+    api.patch(`${BASE}/${id}/budget`, { montant }).then((r) => r.data),
 };
