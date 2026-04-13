@@ -5,6 +5,7 @@ import { useAuth } from "../../../hooks/useAuth";
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/admin", icon: "📊" },
   { label: "Utilisateurs", path: "/admin/users", icon: "👥" },
+  { label: "Départements", path: "/admin/departements", icon: "🏢" },
 ];
 
 export default function AdminLayout() {

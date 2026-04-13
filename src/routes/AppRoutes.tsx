@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminLayout from "../modules/admin/components/AdminLayout";
 import StatistiquesPage from "../modules/admin/pages/StatistiquesPage";
 import UsersPage from "../modules/admin/pages/UsersPage";
+import DepartementsPage from "../modules/admin/pages/DepartementsPage";
 
 import ChefDashboard from "../modules/chef/pages/Dashboard";
 import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
@@ -36,6 +37,7 @@ export default function AppRoutes() {
           {/* Index route for /admin renders the dashboard/statistics */}
           <Route index element={<StatistiquesPage />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="departements" element={<DepartementsPage />} />
         </Route>
 
         <Route
