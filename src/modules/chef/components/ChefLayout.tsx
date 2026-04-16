@@ -7,7 +7,7 @@ export default function ChefLayout() {
 
   const NAV_ITEMS = [
     { label: "Dashboard", path: "/chef", icon: "📊" },
-    { label: "Appel aux Besoins", path: "/chef/appels", icon: "📢" },
+    { label: "Collecte des Besoins", path: "/chef/collecte", icon: "📢" },
     { label: "Concertation (Validation)", path: "/chef/concertation", icon: "📦" },
   ];
 

@@ -1,6 +1,5 @@
 // src/modules/chef/pages/Dashboard.tsx
 import { useEffect, useState } from "react";
-import DashboardLayout from "../../../components/layout/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 import { Mail, AlertCircle, DollarSign, Users } from "lucide-react";
 import { chefService, type EnseignantResponse } from "../services/chefService";
@@ -79,13 +78,7 @@ export default function ChefDashboard() {
   };
 
   return (
-    <DashboardLayout
-      role="CHEF_DEPARTEMENT"
-      nom={nom}
-      prenom={prenom}
-      navItems={navItems}
-      subTitle={departementNom || "Département"}
-    >
+    <>
       <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
         
         {/* Header */}
@@ -202,6 +195,6 @@ export default function ChefDashboard() {
         )}
 
       </div>
-    </DashboardLayout>
+    </>
   );
 }

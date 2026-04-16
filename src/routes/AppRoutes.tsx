@@ -10,9 +10,13 @@ import StatistiquesPage from "../modules/admin/pages/StatistiquesPage";
 import UsersPage from "../modules/admin/pages/UsersPage";
 import DepartementsPage from "../modules/admin/pages/DepartementsPage";
 
+import ChefLayout from "../modules/chef/components/ChefLayout";
 import ChefDashboard from "../modules/chef/pages/Dashboard";
+import CollecteBesoinsPage from "../modules/chef/pages/CollecteBesoinsPage";
 
+import EnseignantLayout from "../modules/enseignant/components/EnseignantLayout";
 import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
+import EnseignantDemandesPage from "../modules/enseignant/pages/EnseignantDemandesPage";
 import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
 import TechnicienDashboard from "../modules/technicien/pages/Dashboard";
@@ -46,19 +50,25 @@ export default function AppRoutes() {
           path="/chef"
           element={
             <ProtectedRoute role="CHEF_DEPARTEMENT">
-              <ChefDashboard />
+              <ChefLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ChefDashboard />} />
+          <Route path="collecte" element={<CollecteBesoinsPage />} />
+        </Route>
 
         <Route
           path="/enseignant"
           element={
             <ProtectedRoute role="ENSEIGNANT">
-              <EnseignantDashboard />
+              <EnseignantLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<EnseignantDashboard />} />
+          <Route path="demandes" element={<EnseignantDemandesPage />} />
+        </Route>
 
         <Route
           path="/responsable"
