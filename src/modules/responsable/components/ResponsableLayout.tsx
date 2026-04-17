@@ -2,17 +2,18 @@ import { Outlet } from "react-router-dom";
 import DashboardLayout from "../../../components/layout/DashboardLayout";
 import { useAuth } from "../../../hooks/useAuth";
 
-export default function ChefLayout() {
+export default function ResponsableLayout() {
   const { nom, prenom } = useAuth();
 
   const NAV_ITEMS = [
-    { label: "Dashboard", path: "/chef", icon: "📊" },
-    { label: "Processus d'Achat", path: "/chef/collecte", icon: "📦" },
+    { label: "Dashboard", path: "/responsable", icon: "📊" },
+    { label: "Demandes Transmises", path: "/responsable/demandes", icon: "📁" },
+    { label: "Offres", path: "/responsable/offres", icon: "📋" },
   ];
 
   return (
     <DashboardLayout
-      role="CHEF_DEPARTEMENT"
+      role="RESPONSABLE_RESOURCE"
       nom={nom}
       prenom={prenom}
       navItems={NAV_ITEMS}

@@ -30,8 +30,9 @@ export default function EnseignantDemandesPage() {
 
       setNotifications(notifData);
       setDemandes(demandesData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur chargement espace enseignant :", error);
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Erreur de chargement";
     } finally {
       setLoading(false);
     }
@@ -47,8 +48,9 @@ export default function EnseignantDemandesPage() {
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? updated : n))
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur marquage notification :", error);
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Erreur marquage";
     }
   };
 
@@ -78,8 +80,9 @@ export default function EnseignantDemandesPage() {
     try {
       const data = await besoinService.getByDemande(demId);
       setBesoins(data);
-    } catch (err) {
-      console.error("Erreur chargement des besoins:", err);
+    } catch (error: any) {
+      console.error("Erreur chargement des besoins:", error);
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Erreur lors du chargement des besoins";
     }
   };
 
@@ -104,8 +107,10 @@ export default function EnseignantDemandesPage() {
     try {
       await besoinService.delete(id);
       setBesoins((prev) => prev.filter((b) => b.id !== id));
-    } catch (err) {
-      console.error("Erreur suppression:", err);
+    } catch (error: any) {
+      console.error("Erreur suppression:", error);
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Erreur suppression";
+      alert(apiMessage);
     }
   };
 

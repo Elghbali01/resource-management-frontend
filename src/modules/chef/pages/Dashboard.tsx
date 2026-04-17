@@ -1,13 +1,10 @@
 // src/modules/chef/pages/Dashboard.tsx
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
 import { Mail, AlertCircle, DollarSign, Users } from "lucide-react";
 import { chefService, type EnseignantResponse } from "../services/chefService";
 import api from "../../../services/api";
 
 export default function ChefDashboard() {
-  const { nom, prenom } = useAuth();
-  
   const [enseignants, setEnseignants] = useState<EnseignantResponse[]>([]);
   const [departementNom, setDepartementNom] = useState<string>("");
   const [budget, setBudget] = useState<number | null>(null);
@@ -62,9 +59,6 @@ export default function ChefDashboard() {
     fetchData();
   }, []);
 
-  const navItems = [
-    { label: "Dashboard", path: "/chef", icon: "📊" },
-  ];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

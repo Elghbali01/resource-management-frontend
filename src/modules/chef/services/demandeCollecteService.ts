@@ -18,4 +18,10 @@ export const demandeCollecteService = {
 
   close: (id: number): Promise<DemandeCollecte> =>
     api.patch(`${BASE}/${id}/fermer`).then((r) => r.data),
+
+  valider: (id: number, compteRendu: string): Promise<DemandeCollecte> =>
+    api.patch(`${BASE}/${id}/valider`, { compteRenduConcertation: compteRendu }).then((r) => r.data),
+
+  transmettre: (id: number): Promise<any> =>
+    api.post(`${BASE}/${id}/transmettre`).then((r) => r.data),
 };

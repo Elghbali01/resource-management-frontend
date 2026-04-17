@@ -3,14 +3,17 @@ import type { Besoin } from "../../../types/besoin";
 interface Props {
   besoins: Besoin[];
   demandeTitre: string;
+  hideCardStyle?: boolean;
+  onEdit?: (b: Besoin) => void;
+  onDelete?: (id: number) => void;
 }
 
-export default function BesoinsDemandeList({ besoins, demandeTitre }: Props) {
-  return (
-    <div className="collecte-card mt-6">
-      <div className="collecte-card-header">
-        <h2>Besoins pour : {demandeTitre}</h2>
-        <p>Consultation des demandes de matériel soumises par les enseignants.</p>
+export default function BesoinsDemandeList({ besoins, demandeTitre, hideCardStyle, onEdit, onDelete }: Props) {
+  const content = (
+    <>
+      <div className={hideCardStyle ? "mb-4" : "collecte-card-header"}>
+        <h2>{hideCardStyle ? demandeTitre : `Besoins pour : ${demandeTitre}`}</h2>
+        {!hideCardStyle && <p>Consultation des demandes de matériel soumises par les enseignants.</p>}
       </div>
 
       <div className="demande-list">
@@ -27,6 +30,7 @@ export default function BesoinsDemandeList({ besoins, demandeTitre }: Props) {
                   <th className="p-3 font-semibold text-gray-700">Marque / Details</th>
                   <th className="p-3 font-semibold text-gray-700">Justification</th>
                   <th className="p-3 font-semibold text-gray-700">Date</th>
+                  {(onEdit || onDelete) && <th className="p-3 font-semibold text-gray-700 text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -62,6 +66,16 @@ export default function BesoinsDemandeList({ besoins, demandeTitre }: Props) {
                     <td className="p-3 text-sm text-gray-500">
                       {new Date(b.dateSoumission).toLocaleDateString("fr-FR")}
                     </td>
+                    {(onEdit || onDelete) && (
+                      <td className="p-3 text-right">
+                        {onEdit && (
+                          <button onClick={() => onEdit(b)} className="text-sm text-blue-600 hover:text-blue-800 mr-3">Modifier</button>
+                        )}
+                        {onDelete && (
+                          <button onClick={() => onDelete(b.id)} className="text-sm text-red-600 hover:text-red-800">Supprimer</button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -69,6 +83,16 @@ export default function BesoinsDemandeList({ besoins, demandeTitre }: Props) {
           </div>
         )}
       </div>
+    </>
+  );
+
+  if (hideCardStyle) {
+    return <div className="besoins-list-container">{content}</div>;
+  }
+
+  return (
+    <div className="collecte-card mt-6">
+      {content}
     </div>
   );
 }

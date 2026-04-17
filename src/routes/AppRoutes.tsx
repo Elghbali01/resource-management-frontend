@@ -17,7 +17,9 @@ import CollecteBesoinsPage from "../modules/chef/pages/CollecteBesoinsPage";
 import EnseignantLayout from "../modules/enseignant/components/EnseignantLayout";
 import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
 import EnseignantDemandesPage from "../modules/enseignant/pages/EnseignantDemandesPage";
+import ResponsableLayout from "../modules/responsable/components/ResponsableLayout";
 import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
+import DemandesTransmisesPage from "../modules/responsable/pages/DemandesTransmisesPage";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
 import TechnicienDashboard from "../modules/technicien/pages/Dashboard";
 
@@ -74,10 +76,13 @@ export default function AppRoutes() {
           path="/responsable"
           element={
             <ProtectedRoute role="RESPONSABLE_RESOURCE">
-              <ResponsableDashboard />
+              <ResponsableLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ResponsableDashboard />} />
+          <Route path="demandes" element={<DemandesTransmisesPage />} />
+        </Route>
 
         <Route
           path="/fournisseur"

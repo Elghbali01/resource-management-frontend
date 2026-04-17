@@ -5,9 +5,11 @@ interface Props {
   onOpen: (id: number) => void;
   onClose: (id: number) => void;
   onConsult: (id: number) => void;
+  onConcertation: (demande: DemandeCollecte) => void;
+  onTransmettre: (id: number) => void;
 }
 
-export default function DemandeCollecteList({ demandes, onOpen, onClose, onConsult }: Props) {
+export default function DemandeCollecteList({ demandes, onOpen, onClose, onConsult, onConcertation, onTransmettre }: Props) {
   return (
     <div className="collecte-card">
       <div className="collecte-card-header">
@@ -46,14 +48,30 @@ export default function DemandeCollecteList({ demandes, onOpen, onClose, onConsu
                     onClick={() => onClose(demande.id)}
                     className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition"
                   >
-                    Fermer
+                    Fermer (Entrer en concertation)
+                  </button>
+                )}
+                {demande.statut === "CONCERTATION" && (
+                  <button
+                    onClick={() => onConcertation(demande)}
+                    className="px-3 py-1 bg-purple-500 text-white rounded text-sm hover:bg-purple-600 transition"
+                  >
+                    Voir la Concertation
+                  </button>
+                )}
+                {demande.statut === "VALIDEE" && (
+                  <button
+                    onClick={() => onTransmettre(demande.id)}
+                    className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition"
+                  >
+                    Transmettre au Responsable
                   </button>
                 )}
                 <button
                   onClick={() => onConsult(demande.id)}
                   className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition"
                 >
-                  Consulter les besoins
+                  Besoins
                 </button>
               </div>
             </div>

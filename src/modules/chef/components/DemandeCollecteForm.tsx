@@ -47,10 +47,8 @@ export default function DemandeCollecteForm({ onCreated }: Props) {
         dateLimite: "",
       });
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          "Erreur lors de la création de la demande."
-      );
+      const apiMessage = err?.response?.data?.erreur || err?.response?.data?.message || "Erreur lors de la création de la demande.";
+      setError(apiMessage);
     } finally {
       setLoading(false);
     }
