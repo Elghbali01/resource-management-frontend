@@ -67,12 +67,10 @@ export default function CollecteBesoinsPage() {
       const demande = demandes.find((d) => d.id === id);
       if (demande) setSelectedDemandeTitre(demande.titre);
       
-      // On s'assure de bien remonter les besoins individuels ET collectifs dans l'historique
-      const [individuels, collectifs] = await Promise.all([
-        besoinChefService.getBesoinsByDemande(id),
-        besoinChefService.getCollectifsByDemande(id),
-      ]);
-      setBesoins([...individuels, ...collectifs]);
+      // L'API getBesoinsByDemande remonte en réalité TOUS les besoins (individuels + collectifs)
+      // Donc pas besoin d'ajouter les collectifs manuellement pour la vue historique globale
+      const loadedBesoins = await besoinChefService.getBesoinsByDemande(id);
+      setBesoins(loadedBesoins);
       
       setConsultingDemandeId(id);
       setConcertingDemande(null);

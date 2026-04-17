@@ -28,11 +28,12 @@ export default function ConcertationPanel({ demande, onDemandeValidee }: Props) 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [individuels, collectifs] = await Promise.all([
+      const [tousLesBesoins, collectifs] = await Promise.all([
         besoinChefService.getBesoinsByDemande(demande.id),
         besoinChefService.getCollectifsByDemande(demande.id),
       ]);
-      setBesoins(individuels);
+      // L'API de base retournant tout, on isole vraiment ceux des profs
+      setBesoins(tousLesBesoins.filter(b => b.natureBesoin === "INDIVIDUEL"));
       setBesoinsCollectifs(collectifs);
     } catch (err) {
       console.error("Erreur chargement concertation:", err);
