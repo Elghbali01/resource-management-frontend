@@ -22,6 +22,20 @@ export default function BesoinList({ besoins, onEdit, onDelete }: Props) {
               <span className="text-sm bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold">Qté: {b.quantite}</span>
             </div>
             {b.marqueSouhaitee && <p className="text-sm text-gray-700"><span className="font-semibold">Marque:</span> {b.marqueSouhaitee}</p>}
+            {b.typeMateriel === "ORDINATEUR" && (
+              <div className="text-sm text-gray-700 mt-1">
+                {b.cpu && <div><span className="font-semibold">CPU:</span> {b.cpu}</div>}
+                {b.ram && <div><span className="font-semibold">RAM:</span> {b.ram}</div>}
+                {b.disqueDur && <div><span className="font-semibold">Stockage:</span> {b.disqueDur}</div>}
+                {b.ecran && <div><span className="font-semibold">Écran:</span> {b.ecran}</div>}
+              </div>
+            )}
+            {b.typeMateriel === "IMPRIMANTE" && (
+              <div className="text-sm text-gray-700 mt-1">
+                {b.vitesseImpression && <div><span className="font-semibold">Vitesse:</span> {b.vitesseImpression}</div>}
+                {b.resolution && <div><span className="font-semibold">Résolution:</span> {b.resolution}</div>}
+              </div>
+            )}
             {b.caracteristiques && <p className="text-sm text-gray-700"><span className="font-semibold">Détails:</span> {b.caracteristiques}</p>}
             {b.justification && <p className="text-sm text-gray-700 italic mt-1 bg-white p-2 border rounded"><span className="font-semibold">Justification:</span> {b.justification}</p>}
             

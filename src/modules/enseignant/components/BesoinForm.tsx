@@ -15,8 +15,13 @@ export default function BesoinForm({ demandeId, onSubmitted, besoinToEdit, onCan
     typeMateriel: "ORDINATEUR",
     quantite: 1,
     marqueSouhaitee: "",
-    caracteristiques: "",
     justification: "",
+    cpu: "",
+    ram: "",
+    disqueDur: "",
+    ecran: "",
+    vitesseImpression: "",
+    resolution: "",
   });
   
   const [loading, setLoading] = useState(false);
@@ -30,8 +35,13 @@ export default function BesoinForm({ demandeId, onSubmitted, besoinToEdit, onCan
         typeMateriel: besoinToEdit.typeMateriel,
         quantite: besoinToEdit.quantite,
         marqueSouhaitee: besoinToEdit.marqueSouhaitee || "",
-        caracteristiques: besoinToEdit.caracteristiques || "",
         justification: besoinToEdit.justification || "",
+        cpu: besoinToEdit.cpu || "",
+        ram: besoinToEdit.ram || "",
+        disqueDur: besoinToEdit.disqueDur || "",
+        ecran: besoinToEdit.ecran || "",
+        vitesseImpression: besoinToEdit.vitesseImpression || "",
+        resolution: besoinToEdit.resolution || "",
       });
       setError("");
       setSuccess("");
@@ -53,10 +63,25 @@ export default function BesoinForm({ demandeId, onSubmitted, besoinToEdit, onCan
       return;
     }
 
-    const payload = {
-      ...form,
+    const basePayload = {
+      demandeId: form.demandeId,
+      typeMateriel: form.typeMateriel,
       quantite: Number(form.quantite),
+      marqueSouhaitee: form.marqueSouhaitee,
+      justification: form.justification,
     };
+    
+    const payload: any = { ...basePayload };
+    if (form.typeMateriel === "ORDINATEUR") {
+      payload.cpu = form.cpu;
+      payload.ram = form.ram;
+      payload.disqueDur = form.disqueDur;
+      payload.ecran = form.ecran;
+    } else {
+      payload.vitesseImpression = form.vitesseImpression;
+      payload.resolution = form.resolution;
+    }
+
     console.log("Payload envoyé :", payload);
 
     try {
@@ -75,8 +100,13 @@ export default function BesoinForm({ demandeId, onSubmitted, besoinToEdit, onCan
           typeMateriel: "ORDINATEUR",
           quantite: 1,
           marqueSouhaitee: "",
-          caracteristiques: "",
           justification: "",
+          cpu: "",
+          ram: "",
+          disqueDur: "",
+          ecran: "",
+          vitesseImpression: "",
+          resolution: "",
         });
       }
     } catch (err: any) {
@@ -139,17 +169,81 @@ export default function BesoinForm({ demandeId, onSubmitted, besoinToEdit, onCan
           />
         </div>
 
-        <div>
-           <label className="block text-sm font-medium text-gray-700 mb-1">Caractéristiques requises</label>
-           <textarea
-             name="caracteristiques"
-             rows={2}
-             value={form.caracteristiques}
-             onChange={handleChange}
-             placeholder="Ex: i7, 16Go RAM (Optionnel)"
-             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
-           />
-        </div>
+        {form.typeMateriel === "ORDINATEUR" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">CPU</label>
+              <input
+                type="text"
+                name="cpu"
+                value={form.cpu}
+                onChange={handleChange}
+                placeholder="Ex: i7"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">RAM</label>
+              <input
+                type="text"
+                name="ram"
+                value={form.ram}
+                onChange={handleChange}
+                placeholder="Ex: 16 Go"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Disque dur</label>
+              <input
+                type="text"
+                name="disqueDur"
+                value={form.disqueDur}
+                onChange={handleChange}
+                placeholder="Ex: 512 Go SSD"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Écran</label>
+              <input
+                type="text"
+                name="ecran"
+                value={form.ecran}
+                onChange={handleChange}
+                placeholder="Ex: 15 pouces"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+          </div>
+        )}
+
+        {form.typeMateriel === "IMPRIMANTE" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Vitesse d'impression</label>
+              <input
+                type="text"
+                name="vitesseImpression"
+                value={form.vitesseImpression}
+                onChange={handleChange}
+                placeholder="Ex: 20 ppm"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Résolution</label>
+              <input
+                type="text"
+                name="resolution"
+                value={form.resolution}
+                onChange={handleChange}
+                placeholder="Ex: 1200 dpi"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+          </div>
+        )}
 
         <div>
            <label className="block text-sm font-medium text-gray-700 mb-1">Justification du besoin</label>

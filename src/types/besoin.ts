@@ -19,13 +19,27 @@ export interface Besoin {
   enseignantNom?: string;
   enseignantPrenom?: string;
   departementNom?: string;
+
+  cpu?: string;
+  ram?: string;
+  disqueDur?: string;
+  ecran?: string;
+  vitesseImpression?: string;
+  resolution?: string;
 }
 
 export interface BesoinRequest {
   demandeId: number;
-  typeMateriel: "ORDINATEUR" | "IMPRIMANTE";
+  typeMateriel: TypeMateriel;
   quantite: number;
   marqueSouhaitee?: string;
-  caracteristiques?: string;
   justification?: string;
+
+  cpu?: string;
+  ram?: string;
+  disqueDur?: string;
+  ecran?: string;
+  
+  vitesseImpression?: string;
+  resolution?: string;
 }

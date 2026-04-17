@@ -41,7 +41,20 @@ export default function BesoinsDemandeList({ besoins, demandeTitre }: Props) {
                     <td className="p-3 font-bold">{b.quantite}</td>
                     <td className="p-3 text-sm text-gray-600">
                       <div><span className="font-semibold">Marque:</span> {b.marqueSouhaitee || "-"}</div>
-                      <div><span className="font-semibold">Détails:</span> {b.caracteristiques || "-"}</div>
+                      {b.typeMateriel === "ORDINATEUR" && (
+                        <>
+                          {b.cpu && <div><span className="font-semibold">CPU:</span> {b.cpu}</div>}
+                          {b.ram && <div><span className="font-semibold">RAM:</span> {b.ram}</div>}
+                          {b.disqueDur && <div><span className="font-semibold">Stockage:</span> {b.disqueDur}</div>}
+                          {b.ecran && <div><span className="font-semibold">Écran:</span> {b.ecran}</div>}
+                        </>
+                      )}
+                      {b.typeMateriel === "IMPRIMANTE" && (
+                        <>
+                          {b.vitesseImpression && <div><span className="font-semibold">Vitesse:</span> {b.vitesseImpression}</div>}
+                          {b.resolution && <div><span className="font-semibold">Résolution:</span> {b.resolution}</div>}
+                        </>
+                      )}
                     </td>
                     <td className="p-3 text-sm italic text-gray-600">
                       {b.justification || "-"}
