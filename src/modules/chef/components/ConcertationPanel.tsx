@@ -42,12 +42,8 @@ export default function ConcertationPanel({ demande, onDemandeValidee }: Props) 
     }
   };
 
-  const handleBesoinCollectifSubmitted = (nouveau: Besoin) => {
-    setBesoinsCollectifs((prev) => {
-      const exists = prev.find((b) => b.id === nouveau.id);
-      if (exists) return prev.map((b) => b.id === nouveau.id ? nouveau : b);
-      return [...prev, nouveau];
-    });
+  const handleBesoinSubmitted = async () => {
+    await loadData();
     setBesoinToEdit(null);
   };
 
@@ -55,7 +51,17 @@ export default function ConcertationPanel({ demande, onDemandeValidee }: Props) 
     if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce besoin collectif ?")) return;
     try {
       await besoinChefService.delete(id);
-      setBesoinsCollectifs((prev) => prev.filter(b => b.id !== id));
+      await loadData();
+    } catch (err) {
+      console.error("Erreur suppression:", err);
+    }
+  };
+
+  const handleDeleteIndividuel = async (id: number) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce besoin individuel ?")) return;
+    try {
+      await besoinChefService.delete(id);
+      await loadData();
     } catch (err) {
       console.error("Erreur suppression:", err);
     }
@@ -87,7 +93,13 @@ export default function ConcertationPanel({ demande, onDemandeValidee }: Props) 
         {errorMsg && <div className="collecte-alert collecte-alert-error m-4">{errorMsg}</div>}
 
         <div className="m-4">
-          <BesoinsDemandeList besoins={besoins} demandeTitre={demande.titre + " (Besoins Individuels)"} hideCardStyle />
+          <BesoinsDemandeList 
+            besoins={besoins} 
+            demandeTitre={demande.titre + " (Besoins Individuels)"} 
+            hideCardStyle 
+            onEdit={setBesoinToEdit} 
+            onDelete={handleDeleteIndividuel} 
+          />
         </div>
 
         <div className="m-4 border-t pt-4">
@@ -101,7 +113,7 @@ export default function ConcertationPanel({ demande, onDemandeValidee }: Props) 
           <div className="mt-4">
              <BesoinCollectifForm
                demandeId={demande.id}
-               onSubmitted={handleBesoinCollectifSubmitted}
+               onSubmitted={handleBesoinSubmitted}
                besoinToEdit={besoinToEdit}
                onCanceledEdit={() => setBesoinToEdit(null)}
              />

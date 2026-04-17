@@ -37,7 +37,7 @@ export default function BesoinsDemandeList({ besoins, demandeTitre, hideCardStyl
                 {besoins.map((b) => (
                   <tr key={b.id} className="border-b hover:bg-gray-50/50">
                     <td className="p-3">
-                      {b.enseignantNom} {b.enseignantPrenom}
+                      {b.enseignantNom ? `${b.enseignantNom} ${b.enseignantPrenom}` : "Département (Collectif)"}
                     </td>
                     <td className="p-3">
                       <span className="font-medium">{b.typeMateriel}</span>

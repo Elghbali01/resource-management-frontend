@@ -66,7 +66,7 @@ export default function AffectationsPrevuesList({ demandeId, demandeTitre, depar
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{a.departementNom}</p>
                           <p className="text-xs text-gray-500 flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-blue-400"></span> Collectif
+                            <span className="w-2 h-2 rounded-full bg-blue-400"></span> Département
                           </p>
                         </div>
                       )}

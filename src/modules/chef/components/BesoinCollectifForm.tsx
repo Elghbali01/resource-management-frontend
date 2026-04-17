@@ -82,12 +82,19 @@ export default function BesoinCollectifForm({ demandeId, onSubmitted, besoinToEd
       payload.resolution = form.resolution;
     }
 
+    // IMPORTANT: Nettoyer les champs vides pour éviter les problèmes de validation côté Backend
+    Object.keys(payload).forEach(key => {
+      if (payload[key] === "") {
+        delete payload[key];
+      }
+    });
+
     try {
       setLoading(true);
       if (besoinToEdit) {
         const updated = await besoinChefService.update(besoinToEdit.id, payload);
         onSubmitted(updated);
-        setSuccess("Besoin collectif modifié avec succès.");
+        setSuccess("Besoin modifié avec succès.");
         if (onCanceledEdit) onCanceledEdit();
       } else {
         const created = await besoinChefService.createCollectif(payload);
@@ -121,8 +128,8 @@ export default function BesoinCollectifForm({ demandeId, onSubmitted, besoinToEd
   return (
     <div className="collecte-card mt-6">
       <div className="collecte-card-header">
-        <h2>{besoinToEdit ? "Modifier un besoin collectif" : "Ajouter un besoin collectif"}</h2>
-        <p>Spécifiez un matériel commun pour l'ensemble du département.</p>
+        <h2>{besoinToEdit ? "Modifier le besoin" : "Ajouter un besoin collectif"}</h2>
+        <p>{besoinToEdit ? "Modifiez les caractéristiques du matériel." : "Spécifiez un matériel commun pour l'ensemble du département."}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="collecte-form p-4 border border-gray-100 shadow-sm mt-4 space-y-4">

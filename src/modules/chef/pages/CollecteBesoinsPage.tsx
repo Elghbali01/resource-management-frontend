@@ -18,6 +18,7 @@ export default function CollecteBesoinsPage() {
   const [concertingDemande, setConcertingDemande] = useState<DemandeCollecte | null>(null);
   
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const loadDemandes = async () => {
     try {
@@ -66,8 +67,13 @@ export default function CollecteBesoinsPage() {
       const demande = demandes.find((d) => d.id === id);
       if (demande) setSelectedDemandeTitre(demande.titre);
       
-      const loadedBesoins = await besoinChefService.getBesoinsByDemande(id);
-      setBesoins(loadedBesoins);
+      // On s'assure de bien remonter les besoins individuels ET collectifs dans l'historique
+      const [individuels, collectifs] = await Promise.all([
+        besoinChefService.getBesoinsByDemande(id),
+        besoinChefService.getCollectifsByDemande(id),
+      ]);
+      setBesoins([...individuels, ...collectifs]);
+      
       setConsultingDemandeId(id);
       setConcertingDemande(null);
       setErrorMsg("");
@@ -88,7 +94,8 @@ export default function CollecteBesoinsPage() {
       // The API returns a TransmissionDemandeResponse. We just update the status locally for simplicity.
       setDemandes((prev) => prev.map((d) => (d.id === id ? { ...d, statut: "TRANSMISE" } : d)));
       setErrorMsg("");
-      alert(`Demande transmise avec succès ! ${updatedResponse.nombreAffectationsPrevues} affectations prévues.`);
+      setSuccessMsg(`Demande transmise avec succès — ${updatedResponse.nombreAffectationsPrevues} affectations prévues générées.`);
+      setTimeout(() => setSuccessMsg(""), 5000);
     } catch (error: any) {
       const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || error?.message || "Erreur lors de la transmission.";
       setErrorMsg(apiMessage);
@@ -110,6 +117,7 @@ export default function CollecteBesoinsPage() {
         <DemandeCollecteForm onCreated={handleCreated} />
         <div className="flex flex-col gap-4">
           {errorMsg && <div className="collecte-alert collecte-alert-error">{errorMsg}</div>}
+          {successMsg && <div className="collecte-alert collecte-alert-success">{successMsg}</div>}
           {loading ? (
             <div className="collecte-card">Chargement des demandes...</div>
           ) : (
