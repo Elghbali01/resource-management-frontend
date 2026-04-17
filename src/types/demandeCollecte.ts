@@ -15,5 +15,4 @@ export interface CreateDemandeCollecteRequest {
   titre: string;
   description: string;
   dateLimite: string;
-  statut: "OUVERTE" | "FERMEE" | "BROUILLON";
 }

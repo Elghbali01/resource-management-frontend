@@ -11,7 +11,6 @@ export default function DemandeCollecteForm({ onCreated }: Props) {
     titre: "",
     description: "",
     dateLimite: "",
-    statut: "OUVERTE",
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,7 +45,6 @@ export default function DemandeCollecteForm({ onCreated }: Props) {
         titre: "",
         description: "",
         dateLimite: "",
-        statut: "OUVERTE",
       });
     } catch (err: any) {
       setError(
@@ -100,15 +98,6 @@ export default function DemandeCollecteForm({ onCreated }: Props) {
               value={form.dateLimite}
               onChange={handleChange}
             />
-          </div>
-
-          <div className="collecte-field">
-            <label>Statut</label>
-            <select name="statut" value={form.statut} onChange={handleChange}>
-              <option value="OUVERTE">OUVERTE</option>
-              <option value="BROUILLON">BROUILLON</option>
-              <option value="FERMEE">FERMEE</option>
-            </select>
           </div>
         </div>
 

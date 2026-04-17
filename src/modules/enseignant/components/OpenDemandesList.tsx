@@ -3,9 +3,10 @@ import type { DemandeCollecte } from "../../../types/demandeCollecte";
 interface Props {
   demandes: DemandeCollecte[];
   selectedDemandeId?: number | null;
+  onSelectDemande: (id: number) => void;
 }
 
-export default function OpenDemandesList({ demandes, selectedDemandeId }: Props) {
+export default function OpenDemandesList({ demandes, selectedDemandeId, onSelectDemande }: Props) {
   return (
     <div className="enseignant-card">
       <div className="enseignant-card-header">
@@ -21,7 +22,8 @@ export default function OpenDemandesList({ demandes, selectedDemandeId }: Props)
             <div
               key={demande.id}
               id={`demande-${demande.id}`}
-              className={`demande-item ${selectedDemandeId === demande.id ? "demande-item-highlight" : ""}`}
+              onClick={() => onSelectDemande(demande.id)}
+              className={`demande-item cursor-pointer transition-colors hover:bg-gray-50 ${selectedDemandeId === demande.id ? "demande-item-highlight border-blue-500" : ""}`}
             >
               <div className="demande-item-top">
                 <h3>{demande.titre}</h3>
