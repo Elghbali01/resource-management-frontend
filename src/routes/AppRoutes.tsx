@@ -24,6 +24,7 @@ import AppelsOffrePage from "../modules/responsable/pages/AppelsOffrePage";
 import FournisseurLayout from "../modules/fournisseur/components/FournisseurLayout";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
 import FournisseurAppelsOffrePage from "../modules/fournisseur/pages/FournisseurAppelsOffrePage";
+import MesOffresPage from "../modules/fournisseur/pages/MesOffresPage";
 import TechnicienDashboard from "../modules/technicien/pages/Dashboard";
 
 export default function AppRoutes() {
@@ -98,6 +99,7 @@ export default function AppRoutes() {
         >
           <Route index element={<FournisseurDashboard />} />
           <Route path="offres" element={<FournisseurAppelsOffrePage />} />
+          <Route path="mes-offres" element={<MesOffresPage />} />
         </Route>
 
         <Route

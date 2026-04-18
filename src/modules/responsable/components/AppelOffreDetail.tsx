@@ -1,4 +1,5 @@
 import type { AppelOffreResponse } from "../../../types/appelOffre";
+import ResponsableOffresList from "./ResponsableOffresList";
 
 interface Props {
   appelOffre: AppelOffreResponse;
@@ -97,6 +98,9 @@ export default function AppelOffreDetail({ appelOffre }: Props) {
           </div>
         )}
       </div>
+
+      {/* INTEG ResponsableOffresList */}
+      <ResponsableOffresList appelOffreId={appelOffre.id} />
     </div>
   );
 }

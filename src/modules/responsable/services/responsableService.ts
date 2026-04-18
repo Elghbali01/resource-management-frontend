@@ -1,6 +1,7 @@
 import api from "../../../services/api";
 import type { AffectationPrevueResponse } from "../../../types/affectation";
 import type { AppelOffreResponse, CreateAppelOffreRequest } from "../../../types/appelOffre";
+import type { OffreFournisseurResponse } from "../../../types/offreFournisseur";
 import type { DemandeCollecte } from "../../../types/demandeCollecte";
 
 const BASE = "/responsable/demandes-transmises";
@@ -20,4 +21,13 @@ export const responsableService = {
 
   getAppelOffreById: (id: number): Promise<AppelOffreResponse> =>
     api.get(`/responsable/appels-offre/${id}`).then((r) => r.data),
+
+  getOffresByAppelOffre: (appelOffreId: number): Promise<OffreFournisseurResponse[]> =>
+    api.get(`/responsable/offres/appel-offre/${appelOffreId}`).then((r) => r.data),
+
+  eliminerOffre: (offreId: number, motif: string): Promise<void> =>
+    api.patch(`/responsable/offres/${offreId}/eliminer`, { motif }),
+
+  accepterOffre: (offreId: number, motif: string): Promise<void> =>
+    api.patch(`/responsable/offres/${offreId}/accepter`, { motif }),
 };

@@ -8,6 +8,7 @@ export default function FournisseurLayout() {
   const NAV_ITEMS = [
     { label: "Dashboard", path: "/fournisseur", icon: "📊" },
     { label: "Appels d'Offres", path: "/fournisseur/offres", icon: "📦" },
+    { label: "Mes Offres", path: "/fournisseur/mes-offres", icon: "📝" },
   ];
 
   return (
