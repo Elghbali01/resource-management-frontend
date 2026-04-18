@@ -40,4 +40,32 @@ export const responsableService = {
 
   retirerBlacklistFournisseur: (fournisseurId: number): Promise<void> =>
     api.patch(`/responsable/fournisseurs/${fournisseurId}/retirer-blacklist`),
+
+  // Nouveaux endpoints pour Livraison et Inventaire
+  receptionnerLivraison: (data: any): Promise<any> =>
+    api.post("/responsable/ressources/reception", data).then((r) => r.data),
+
+  getRessources: (): Promise<any[]> =>
+    api.get("/responsable/ressources").then((r) => r.data),
+
+  getRessourceById: (id: number): Promise<any> =>
+    api.get(`/responsable/ressources/${id}`).then((r) => r.data),
+
+  updateRessource: (id: number, data: any): Promise<any> =>
+    api.put(`/responsable/ressources/${id}`, data).then((r) => r.data),
+
+  deleteRessource: (id: number): Promise<void> =>
+    api.delete(`/responsable/ressources/${id}`),
+
+  getAffectations: (): Promise<any[]> =>
+    api.get("/responsable/ressources/affectations").then((r) => r.data),
+
+  createAffectation: (data: any): Promise<any> =>
+    api.post("/responsable/ressources/affectations", data).then((r) => r.data),
+
+  updateAffectation: (id: number, data: any): Promise<any> =>
+    api.put(`/responsable/ressources/affectations/${id}`, data).then((r) => r.data),
+
+  deleteAffectation: (id: number): Promise<void> =>
+    api.delete(`/responsable/ressources/affectations/${id}`),
 };

@@ -10,6 +10,8 @@ export default function ResponsableLayout() {
     { label: "Demandes Transmises", path: "/responsable/demandes", icon: "📁" },
     { label: "Appels d'Offres", path: "/responsable/offres", icon: "📋" },
     { label: "Fournisseurs", path: "/responsable/fournisseurs", icon: "🏢" },
+    { label: "Inventaire", path: "/responsable/inventaire", icon: "📦" },
+    { label: "Affectations", path: "/responsable/affectations", icon: "🔗" },
   ];
 
   return (

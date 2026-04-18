@@ -22,6 +22,8 @@ import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
 import DemandesTransmisesPage from "../modules/responsable/pages/DemandesTransmisesPage";
 import AppelsOffrePage from "../modules/responsable/pages/AppelsOffrePage";
 import FournisseursListPage from "../modules/responsable/pages/FournisseursListPage";
+import InventairePage from "../modules/responsable/pages/InventairePage";
+import AffectationsPage from "../modules/responsable/pages/AffectationsPage";
 import FournisseurLayout from "../modules/fournisseur/components/FournisseurLayout";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
 import FournisseurAppelsOffrePage from "../modules/fournisseur/pages/FournisseurAppelsOffrePage";
@@ -89,6 +91,8 @@ export default function AppRoutes() {
           <Route path="demandes" element={<DemandesTransmisesPage />} />
           <Route path="offres" element={<AppelsOffrePage />} />
           <Route path="fournisseurs" element={<FournisseursListPage />} />
+          <Route path="inventaire" element={<InventairePage />} />
+          <Route path="affectations" element={<AffectationsPage />} />
         </Route>
 
         <Route
