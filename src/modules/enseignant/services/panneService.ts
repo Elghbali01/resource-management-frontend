@@ -9,5 +9,5 @@ export const panneService = {
     api.post("/enseignant/pannes", data).then((r) => r.data),
 
   getMesRessources: (): Promise<any[]> =>
-    api.get("/enseignant/ressources").then((r) => r.data),
+    api.get("/enseignant/pannes/ressources").then((r) => r.data),
 };

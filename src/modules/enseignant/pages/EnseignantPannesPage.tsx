@@ -82,19 +82,25 @@ export default function EnseignantPannesPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ressource défectueuse *</label>
-              <select
-                required
-                value={formData.ressourceId}
-                onChange={e => setFormData({ ...formData, ressourceId: Number(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring focus:border-blue-300"
-              >
-                <option value={0} disabled>-- Choisir une ressource affectée --</option>
-                {ressources.map(r => (
-                  <option key={r.id} value={r.id}>
-                    [{r.numeroInventaire}] {r.marque} {r.typeMateriel}
-                  </option>
-                ))}
-              </select>
+              {ressources.length === 0 ? (
+                <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-500 italic">
+                  Aucune ressource affectée disponible pour signalement
+                </div>
+              ) : (
+                <select
+                  required
+                  value={formData.ressourceId}
+                  onChange={e => setFormData({ ...formData, ressourceId: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring focus:border-blue-300"
+                >
+                  <option value={0} disabled>-- Choisir une ressource affectée --</option>
+                  {ressources.map(r => (
+                    <option key={r.ressourceId} value={r.ressourceId}>
+                      [{r.numeroInventaire}] {r.typeMateriel} {r.marque} | CB: {r.codeBarres || "Néant"} | {r.departementNom} | {r.typeAffectation}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description du problème *</label>
