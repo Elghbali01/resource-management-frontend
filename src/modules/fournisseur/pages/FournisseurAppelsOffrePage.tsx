@@ -16,7 +16,8 @@ export default function FournisseurAppelsOffrePage() {
       setAppelsOffre(aos);
     } catch (error: any) {
       console.error("Erreur de chargement fournisseur", error);
-      setErrorMsg("Impossible de récupérer les appels d'offres en cours.");
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Impossible de récupérer les appels d'offres en cours.";
+      setErrorMsg(apiMessage);
     } finally {
       setLoading(false);
     }
@@ -32,7 +33,8 @@ export default function FournisseurAppelsOffrePage() {
       const data = await fournisseurService.getAppelOffreById(id);
       setSelectedAppel(data);
     } catch (error: any) {
-      setErrorMsg("Impossible de charger le détail de l'appel d'offre.");
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Impossible de charger le détail de l'appel d'offre.";
+      setErrorMsg(apiMessage);
     } finally {
       setLoading(false);
     }

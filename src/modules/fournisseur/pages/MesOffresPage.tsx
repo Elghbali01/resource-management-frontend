@@ -14,7 +14,8 @@ export default function MesOffresPage() {
       setOffres(data);
     } catch (error: any) {
       console.error("Erreur de chargement de mes offres", error);
-      setErrorMsg("Impossible de récupérer l'historique de vos offres.");
+      const apiMessage = error?.response?.data?.erreur || error?.response?.data?.message || "Impossible de récupérer l'historique de vos offres.";
+      setErrorMsg(apiMessage);
     } finally {
       setLoading(false);
     }

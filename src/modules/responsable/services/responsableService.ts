@@ -2,6 +2,7 @@ import api from "../../../services/api";
 import type { AffectationPrevueResponse } from "../../../types/affectation";
 import type { AppelOffreResponse, CreateAppelOffreRequest } from "../../../types/appelOffre";
 import type { OffreFournisseurResponse } from "../../../types/offreFournisseur";
+import type { FournisseurAdminResponse } from "../../../types/fournisseur";
 import type { DemandeCollecte } from "../../../types/demandeCollecte";
 
 const BASE = "/responsable/demandes-transmises";
@@ -30,4 +31,13 @@ export const responsableService = {
 
   accepterOffre: (offreId: number, motif: string): Promise<void> =>
     api.patch(`/responsable/offres/${offreId}/accepter`, { motif }),
+
+  getFournisseurs: (): Promise<FournisseurAdminResponse[]> =>
+    api.get("/responsable/fournisseurs").then((r) => r.data),
+
+  blacklistFournisseur: (fournisseurId: number, motif: string): Promise<void> =>
+    api.patch(`/responsable/fournisseurs/${fournisseurId}/blacklist`, { motif }),
+
+  retirerBlacklistFournisseur: (fournisseurId: number): Promise<void> =>
+    api.patch(`/responsable/fournisseurs/${fournisseurId}/retirer-blacklist`),
 };

@@ -8,7 +8,8 @@ export default function ResponsableLayout() {
   const NAV_ITEMS = [
     { label: "Dashboard", path: "/responsable", icon: "📊" },
     { label: "Demandes Transmises", path: "/responsable/demandes", icon: "📁" },
-    { label: "Offres", path: "/responsable/offres", icon: "📋" },
+    { label: "Appels d'Offres", path: "/responsable/offres", icon: "📋" },
+    { label: "Fournisseurs", path: "/responsable/fournisseurs", icon: "🏢" },
   ];
 
   return (
