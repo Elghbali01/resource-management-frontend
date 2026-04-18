@@ -12,6 +12,7 @@ export default function ResponsableLayout() {
     { label: "Fournisseurs", path: "/responsable/fournisseurs", icon: "🏢" },
     { label: "Inventaire", path: "/responsable/inventaire", icon: "📦" },
     { label: "Affectations", path: "/responsable/affectations", icon: "🔗" },
+    { label: "Maintenance", path: "/responsable/maintenance", icon: "🛠️" },
   ];
 
   return (

@@ -17,6 +17,7 @@ import CollecteBesoinsPage from "../modules/chef/pages/CollecteBesoinsPage";
 import EnseignantLayout from "../modules/enseignant/components/EnseignantLayout";
 import EnseignantDashboard from "../modules/enseignant/pages/Dashboard";
 import EnseignantDemandesPage from "../modules/enseignant/pages/EnseignantDemandesPage";
+import EnseignantPannesPage from "../modules/enseignant/pages/EnseignantPannesPage";
 import ResponsableLayout from "../modules/responsable/components/ResponsableLayout";
 import ResponsableDashboard from "../modules/responsable/pages/Dashboard";
 import DemandesTransmisesPage from "../modules/responsable/pages/DemandesTransmisesPage";
@@ -24,12 +25,14 @@ import AppelsOffrePage from "../modules/responsable/pages/AppelsOffrePage";
 import FournisseursListPage from "../modules/responsable/pages/FournisseursListPage";
 import InventairePage from "../modules/responsable/pages/InventairePage";
 import AffectationsPage from "../modules/responsable/pages/AffectationsPage";
+import MaintenancePage from "../modules/responsable/pages/MaintenancePage";
 import FournisseurLayout from "../modules/fournisseur/components/FournisseurLayout";
 import FournisseurDashboard from "../modules/fournisseur/pages/Dashboard";
 import FournisseurAppelsOffrePage from "../modules/fournisseur/pages/FournisseurAppelsOffrePage";
 import MesOffresPage from "../modules/fournisseur/pages/MesOffresPage";
+import TechnicienLayout from "../modules/technicien/components/TechnicienLayout";
 import TechnicienDashboard from "../modules/technicien/pages/Dashboard";
-
+import InterventionsPage from "../modules/technicien/pages/InterventionsPage";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -77,6 +80,7 @@ export default function AppRoutes() {
         >
           <Route index element={<EnseignantDashboard />} />
           <Route path="demandes" element={<EnseignantDemandesPage />} />
+          <Route path="pannes" element={<EnseignantPannesPage />} />
         </Route>
 
         <Route
@@ -93,6 +97,7 @@ export default function AppRoutes() {
           <Route path="fournisseurs" element={<FournisseursListPage />} />
           <Route path="inventaire" element={<InventairePage />} />
           <Route path="affectations" element={<AffectationsPage />} />
+          <Route path="maintenance" element={<MaintenancePage />} />
         </Route>
 
         <Route
@@ -112,10 +117,13 @@ export default function AppRoutes() {
           path="/technicien"
           element={
             <ProtectedRoute role="TECHNICIEN">
-              <TechnicienDashboard />
+              <TechnicienLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<TechnicienDashboard />} />
+          <Route path="interventions" element={<InterventionsPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

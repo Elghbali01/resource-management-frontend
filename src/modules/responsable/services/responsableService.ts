@@ -68,4 +68,11 @@ export const responsableService = {
 
   deleteAffectation: (id: number): Promise<void> =>
     api.delete(`/responsable/ressources/affectations/${id}`),
+
+  // Nouveaux endpoints pour la maintenance
+  getMaintenancePannes: (): Promise<any[]> =>
+    api.get("/responsable/maintenance/pannes").then((r) => r.data),
+
+  prendreDecisionMaintenance: (panneId: number, data: { decision: string; motif: string }): Promise<any> =>
+    api.patch(`/responsable/maintenance/pannes/${panneId}/decision`, data).then((r) => r.data),
 };
