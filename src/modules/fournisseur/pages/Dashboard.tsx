@@ -1,21 +1,10 @@
-// src/modules/fournisseur/pages/Dashboard.tsx
-import DashboardLayout from "../../../components/layout/DashboardLayout";
-import { useAuth } from "../../../hooks/useAuth";
-
 export default function FournisseurDashboard() {
-  const { nom, prenom } = useAuth();
-
   return (
-    <DashboardLayout
-      role="FOURNISSEUR"
-      nom={nom}
-      prenom={prenom}
-      navItems={[
-        { label: "Dashboard", path: "/fournisseur", icon: "📊" },
-        { label: "Offres", path: "/fournisseur/offres", icon: "📦" },
-      ]}
-    >
-      <h1>Fournisseur Dashboard</h1>
-    </DashboardLayout>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Tableau de bord Fournisseur</h1>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <p className="text-gray-600">Bienvenue dans l'espace fournisseur. Utilisez le menu pour naviguer vers les appels d'offres en cours.</p>
+      </div>
+    </div>
   );
 }
