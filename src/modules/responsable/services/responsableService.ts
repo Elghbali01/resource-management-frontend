@@ -57,6 +57,12 @@ export const responsableService = {
   deleteRessource: (id: number): Promise<void> =>
     api.delete(`/responsable/ressources/${id}`),
 
+  getDepartements: (): Promise<any[]> =>
+    api.get("/responsable/ressources/departements").then((r) => r.data),
+
+  getEnseignantsByDepartement: (departementId: number): Promise<any[]> =>
+    api.get(`/responsable/ressources/departements/${departementId}/enseignants`).then((r) => r.data),
+
   getAffectations: (): Promise<any[]> =>
     api.get("/responsable/ressources/affectations").then((r) => r.data),
 

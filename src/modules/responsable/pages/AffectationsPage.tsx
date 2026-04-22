@@ -6,6 +6,8 @@ import type { RessourceResponse } from "../../../types/ressource";
 export default function AffectationsPage() {
   const [affectations, setAffectations] = useState<AffectationRessourceResponse[]>([]);
   const [inventaire, setInventaire] = useState<RessourceResponse[]>([]); // To select available ressources
+  const [departements, setDepartements] = useState<any[]>([]);
+  const [enseignants, setEnseignants] = useState<any[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -23,12 +25,14 @@ export default function AffectationsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [affData, resData] = await Promise.all([
+      const [affData, resData, depData] = await Promise.all([
         responsableService.getAffectations(),
-        responsableService.getRessources()
+        responsableService.getRessources(),
+        responsableService.getDepartements()
       ]);
       setAffectations(affData);
       setInventaire(resData);
+      setDepartements(depData);
     } catch (err: any) {
       const apiMessage = err?.response?.data?.erreur || err?.response?.data?.message || "Impossible de charger les affectations.";
       setErrorMsg(apiMessage);
@@ -40,6 +44,16 @@ export default function AffectationsPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (addForm.departementId) {
+      responsableService.getEnseignantsByDepartement(addForm.departementId)
+        .then(setEnseignants)
+        .catch(err => console.error("Erreur chargement enseignants", err));
+    } else {
+      setEnseignants([]);
+    }
+  }, [addForm.departementId]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,25 +144,33 @@ export default function AffectationsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID du Département *</label>
-                <input 
-                  type="number" required min="1"
-                  placeholder="Ex: 2"
+                <label className="block text-sm font-medium text-gray-700 mb-1">Département *</label>
+                <select 
+                  required
                   value={addForm.departementId || ""}
-                  onChange={e => setAddForm({...addForm, departementId: Number(e.target.value)})}
+                  onChange={e => setAddForm({...addForm, departementId: Number(e.target.value), enseignantId: undefined})}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:ring focus:border-blue-300"
-                />
+                >
+                  <option value="" disabled>-- Choisir un département --</option>
+                  {departements.map(d => (
+                    <option key={d.id} value={d.id}>{d.nom}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Enseignant <span className="text-gray-400 font-normal">(Optionnel)</span></label>
-                <input 
-                  type="number" min="1"
-                  placeholder="Laisser vide si c'est pour tout le département"
+                <label className="block text-sm font-medium text-gray-700 mb-1">Enseignant <span className="text-gray-400 font-normal">(Optionnel)</span></label>
+                <select 
                   value={addForm.enseignantId || ""}
                   onChange={e => setAddForm({...addForm, enseignantId: e.target.value ? Number(e.target.value) : undefined})}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:ring focus:border-blue-300"
-                />
+                  disabled={!addForm.departementId}
+                >
+                  <option value="">-- Tout le département --</option>
+                  {enseignants.map(e => (
+                    <option key={e.id} value={e.id}>{e.prenom} {e.nom}</option>
+                  ))}
+                </select>
                 <p className="text-xs text-gray-500 mt-1 italic">Si vide = affectation collective au département.</p>
               </div>
             </div>
