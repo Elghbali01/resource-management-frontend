@@ -19,13 +19,16 @@ export default function ChefDashboard() {
         const [enseignantsData, departementData] = await Promise.all([
           chefService.getEnseignants().catch(() => []),
           chefService.getMonDepartement().catch((e) => {
-            console.warn("L'endpoint /api/chef/departement n'est peut-être pas implémenté ou a échoué", e);
+            console.warn(
+              "L'endpoint /api/chef/departement n'est peut-être pas implémenté ou a échoué",
+              e,
+            );
             return null;
           }),
         ]);
 
         setEnseignants(enseignantsData);
-        
+
         let nomDept = "";
 
         if (departementData) {
@@ -37,7 +40,7 @@ export default function ChefDashboard() {
         setDepartementNom(nomDept);
 
         try {
-          const budgetRes = await api.get('/chef/departement/budget');
+          const budgetRes = await api.get("/chef/departement/budget");
           if (budgetRes?.data?.budget !== undefined) {
             setBudget(Number(budgetRes.data.budget));
           } else {
@@ -47,7 +50,6 @@ export default function ChefDashboard() {
           console.warn("Impossible de récupérer le budget", err);
           setBudget(null);
         }
-
       } catch (err: any) {
         console.error("Erreur lors de la récupération des données:", err);
         setError("Impossible de charger les données du département.");
@@ -59,28 +61,44 @@ export default function ChefDashboard() {
     fetchData();
   }, []);
 
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "ACTIF":
-        return <span className="px-2.5 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg">Actif</span>;
+        return (
+          <span className="px-2.5 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-lg">
+            Actif
+          </span>
+        );
       case "INACTIF":
-        return <span className="px-2.5 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-lg">Inactif</span>;
+        return (
+          <span className="px-2.5 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-lg">
+            Inactif
+          </span>
+        );
       default:
-        return <span className="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg">{status}</span>;
+        return (
+          <span className="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg">
+            {status}
+          </span>
+        );
     }
   };
 
   return (
     <>
       <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
-        
         {/* Header */}
         <div className="mb-8 border-b pb-4">
           <h1 className="text-3xl font-bold text-gray-900">
-            {departementNom ? `Département de ${departementNom}` : loading ? "Chargement..." : "Département"}
+            {departementNom
+              ? `Département de ${departementNom}`
+              : loading
+                ? "Chargement..."
+                : "Département"}
           </h1>
-          <p className="text-sm text-gray-500 mt-2">Bienvenue sur votre espace de gestion départementale.</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Bienvenue sur votre espace de gestion départementale.
+          </p>
         </div>
 
         {loading ? (
@@ -94,7 +112,6 @@ export default function ChefDashboard() {
           </div>
         ) : (
           <div className="space-y-6">
-            
             {/* Statistiques / Budget */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5">
@@ -102,9 +119,13 @@ export default function ChefDashboard() {
                   <DollarSign className="w-7 h-7" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 font-medium tracking-wide">Budget Alloué</p>
+                  <p className="text-sm text-gray-500 font-medium tracking-wide">
+                    Budget Alloué
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 mt-1">
-                    {budget !== null ? `${budget.toLocaleString()} DHS` : "Non défini"}
+                    {budget !== null
+                      ? `${budget.toLocaleString()} DHS`
+                      : "Non défini"}
                   </p>
                 </div>
               </div>
@@ -114,9 +135,14 @@ export default function ChefDashboard() {
                   <Users className="w-7 h-7" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 font-medium tracking-wide">Enseignants</p>
+                  <p className="text-sm text-gray-500 font-medium tracking-wide">
+                    Enseignants
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 mt-1">
-                    {enseignants.length} <span className="text-lg text-gray-500 font-medium ml-1">profs</span>
+                    {enseignants.length}{" "}
+                    <span className="text-lg text-gray-500 font-medium ml-1">
+                      profs
+                    </span>
                   </p>
                 </div>
               </div>
@@ -125,32 +151,45 @@ export default function ChefDashboard() {
             {/* Table des enseignants */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-100 bg-white flex items-center justify-between">
-                <h3 className="font-bold text-gray-900 text-lg">Corps Professoral</h3>
-                <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full">
-                  Excluant le chef de département
-                </span>
+                <h3 className="font-bold text-gray-900 text-lg">
+                  Corps Professoral
+                </h3>
               </div>
-              
+
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Enseignant</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Département</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Enseignant
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Département
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Statut
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {enseignants.map((prof) => (
-                      <tr key={prof.id} className="hover:bg-gray-50/70 transition-colors">
+                      <tr
+                        key={prof.id}
+                        className="hover:bg-gray-50/70 transition-colors"
+                      >
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center flex-shrink-0 font-bold">
-                              {prof.prenom.charAt(0)}{prof.nom.charAt(0)}
+                              {prof.prenom.charAt(0)}
+                              {prof.nom.charAt(0)}
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-gray-900">{prof.prenom} {prof.nom}</p>
+                              <p className="text-sm font-bold text-gray-900">
+                                {prof.prenom} {prof.nom}
+                              </p>
                             </div>
                           </div>
                         </td>
@@ -172,10 +211,15 @@ export default function ChefDashboard() {
                     ))}
                     {enseignants.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="px-6 py-10 text-center text-gray-500">
+                        <td
+                          colSpan={4}
+                          className="px-6 py-10 text-center text-gray-500"
+                        >
                           <div className="flex flex-col items-center justify-center">
                             <Users className="w-10 h-10 text-gray-300 mb-3" />
-                            <p className="text-sm">Aucun enseignant trouvé pour ce département.</p>
+                            <p className="text-sm">
+                              Aucun enseignant trouvé pour ce département.
+                            </p>
                           </div>
                         </td>
                       </tr>
@@ -184,10 +228,8 @@ export default function ChefDashboard() {
                 </table>
               </div>
             </div>
-
           </div>
         )}
-
       </div>
     </>
   );
