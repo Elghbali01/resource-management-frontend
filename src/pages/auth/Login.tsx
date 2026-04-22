@@ -87,15 +87,15 @@ export default function Login() {
     }
   };
 
-const handleKeyDown = (e: React.KeyboardEvent) => {
-  if (e.key === "Enter") {
-    if (step === "credentials") {
-      handleLogin();
-    } else {
-      handleRoleConfirm();
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (step === "credentials") {
+        handleLogin();
+      } else {
+        handleRoleConfirm();
+      }
     }
-  }
-};
+  };
 
   // ── Rendu ───────────────────────────────────────────────────────────────────
   return (

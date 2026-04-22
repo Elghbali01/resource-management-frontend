@@ -106,7 +106,9 @@ export default function Register() {
             <div className="reg-brand-badge">GestRes</div>
             <div className="reg-brand-block">
               <h2>Inscription Fournisseur</h2>
-              <p>Accédez aux appels d'offres et gérez vos soumissions facilement.</p>
+              <p>
+                Accédez aux appels d'offres et gérez vos soumissions facilement.
+              </p>
             </div>
             <div className="reg-side-stats">
               <div className="reg-side-stat">
@@ -160,8 +162,8 @@ export default function Register() {
             <div className="reg-brand-badge">GestRes</div>
             <h2>Inscription Fournisseur</h2>
             <p>
-              Créez votre compte pour accéder facilement aux appels d'offres
-              et gérer vos soumissions en toute simplicité.
+              Créez votre compte pour accéder facilement aux appels d'offres et
+              gérer vos soumissions en toute simplicité.
             </p>
           </div>
 
@@ -302,7 +304,8 @@ export default function Register() {
 
             <div className="reg-field">
               <label htmlFor="confirmPassword">
-                Confirmer le mot de passe <span className="reg-required">*</span>
+                Confirmer le mot de passe{" "}
+                <span className="reg-required">*</span>
               </label>
               <div className="reg-input-wrap">
                 <input
@@ -313,7 +316,8 @@ export default function Register() {
                   value={form.confirmPassword}
                   onChange={handleChange}
                   className={
-                    form.confirmPassword && form.password === form.confirmPassword
+                    form.confirmPassword &&
+                    form.password === form.confirmPassword
                       ? "reg-valid"
                       : form.confirmPassword
                         ? "reg-error-input"
@@ -329,11 +333,12 @@ export default function Register() {
                   {showConfirm ? "🙈" : "👁"}
                 </button>
               </div>
-              {form.confirmPassword && form.password !== form.confirmPassword && (
-                <p className="reg-hint reg-hint--error">
-                  Les mots de passe ne correspondent pas
-                </p>
-              )}
+              {form.confirmPassword &&
+                form.password !== form.confirmPassword && (
+                  <p className="reg-hint reg-hint--error">
+                    Les mots de passe ne correspondent pas
+                  </p>
+                )}
             </div>
 
             <button
