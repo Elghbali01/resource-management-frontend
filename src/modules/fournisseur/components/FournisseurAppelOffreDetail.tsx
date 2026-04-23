@@ -160,7 +160,7 @@ export default function FournisseurAppelOffreDetail({ appelOffre, onOffreSoumise
                         placeholder="0.00"
                         value={formData[ligne.id]?.prixUnitaire || ""}
                         onChange={e => handleLigneChange(ligne.id, "prixUnitaire", e.target.value)}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-right"
+                        className="w-32 px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-right"
                       />
                     </td>
                     <td className="px-4 py-3 align-middle">
@@ -171,7 +171,7 @@ export default function FournisseurAppelOffreDetail({ appelOffre, onOffreSoumise
                         placeholder="Ex: 24"
                         value={formData[ligne.id]?.dureeGarantieMois || ""}
                         onChange={e => handleLigneChange(ligne.id, "dureeGarantieMois", e.target.value)}
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-right"
+                        className="w-32 px-2 py-1.5 text-sm border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-right"
                       />
                     </td>
                     <td className="px-4 py-3 align-middle">

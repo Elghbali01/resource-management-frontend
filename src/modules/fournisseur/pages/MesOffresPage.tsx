@@ -62,11 +62,11 @@ export default function MesOffresPage() {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-gray-900 text-lg">Appel d'offre : {offre.appelOffreTitre}</h3>
-                    <p className="text-sm text-gray-500">Soumis le {new Date(offre.dateSoumission).toLocaleDateString("fr-FR")} à {new Date(offre.dateSoumission).toLocaleTimeString("fr-FR", {hour: '2-digit', minute:'2-digit'})}</p>
+                    <p className="text-sm text-gray-500">Soumis le {new Date(offre.dateSoumission).toLocaleDateString("fr-FR")} à {new Date(offre.dateSoumission).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {getStatutBadge(offre.statut)}
-                    <span className="font-extrabold text-blue-900 text-lg">{offre.montantTotal.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'})}</span>
+                    <span className="font-extrabold text-blue-900 text-lg">{offre.montantTotal.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
                   </div>
                 </div>
 
@@ -88,13 +88,13 @@ export default function MesOffresPage() {
                           <span>Marque proposée:</span>
                           <span className="font-medium text-gray-900">{l.marque}</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs text-gray-600 mb-1">
-                          <span>P.U:</span>
-                          <span className="font-medium text-gray-900">{l.prixUnitaire} €</span>
+                        <div className="flex justify-between items-center text-xs text-gray-600 mb-1 min-w-[150px]">
+                            <span className="w-20 font-medium text-gray-700">P.U (€):</span>
+                            <span className="font-medium text-gray-900">{l.prixUnitaire.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'})}</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs text-gray-600 mb-1">
-                          <span>Garantie:</span>
-                          <span className="font-medium text-gray-900">{l.dureeGarantieMois} mois</span>
+                        <div className="flex justify-between items-center text-xs text-gray-600 mb-1 min-w-[150px]">
+                            <span>Garantie:</span>
+                            <span className="font-medium text-gray-900">{l.dureeGarantieMois} mois</span>
                         </div>
                         <div className="flex justify-between items-center text-xs text-gray-600 font-bold border-t border-gray-50 pt-1 mt-1">
                           <span>TOTAL LIGNE:</span>
