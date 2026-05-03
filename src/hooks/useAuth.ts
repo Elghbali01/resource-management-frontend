@@ -5,5 +5,6 @@ export function useAuth() {
     role: localStorage.getItem("role"),
     nom: localStorage.getItem("nom") ?? "",
     prenom: localStorage.getItem("prenom") ?? "",
+    mustChangePassword: localStorage.getItem("mustChangePassword") === "true",
   };
 }

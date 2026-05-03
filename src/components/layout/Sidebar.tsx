@@ -36,6 +36,10 @@ export default function Sidebar({ role, nom, prenom, navItems, subTitle }: Sideb
     navigate("/login");
   };
 
+  const handleSettings = () => {
+    navigate("/change-password");
+  };
+
   return (
     <aside className="sidebar">
       {/* ── Brand ── */}
@@ -77,6 +81,12 @@ export default function Sidebar({ role, nom, prenom, navItems, subTitle }: Sideb
           </NavLink>
         ))}
       </nav>
+
+      {/* ── Settings ── */}
+      <button className="sidebar-settings" onClick={handleSettings} id="sidebar-settings-btn">
+        <span>⚙️</span>
+        Mot de passe
+      </button>
 
       {/* ── Logout ── */}
       <button className="sidebar-logout" onClick={handleLogout}>

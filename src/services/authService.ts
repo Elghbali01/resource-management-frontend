@@ -27,6 +27,13 @@ export interface LoginResponse {
   email: string;
   role: string | null;
   hasDoubleRole: boolean; // true => afficher la popup de choix de rôle
+  mustChangePassword: boolean; // true => forcer le changement de mot de passe
+}
+
+export interface ChangePasswordRequest {
+  ancienMotDePasse: string;
+  nouveauMotDePasse: string;
+  confirmerMotDePasse: string;
 }
 
 export interface RegisterRequest {
@@ -65,13 +72,23 @@ export const saveSession = (response: LoginResponse) => {
   localStorage.setItem("userId", String(response.id));
   localStorage.setItem("nom", response.nom);
   localStorage.setItem("prenom", response.prenom);
+  localStorage.setItem("mustChangePassword", String(response.mustChangePassword ?? false));
 };
 
 export const clearSession = () => {
-  ["token", "role", "userId", "nom", "prenom"].forEach((k) =>
-    localStorage.removeItem(k),
+  ["token", "role", "userId", "nom", "prenom", "mustChangePassword"].forEach(
+    (k) => localStorage.removeItem(k),
   );
 };
+
+// Marque le mot de passe comme changé
+export const markPasswordChanged = () => {
+  localStorage.setItem("mustChangePassword", "false");
+};
+
+// Appel API changement de mot de passe
+export const changePassword = (data: ChangePasswordRequest) =>
+  axiosAuth.put(`/auth/change-password`, data);
 
 export const getToken = () => localStorage.getItem("token");
 export const getRole = () => localStorage.getItem("role");

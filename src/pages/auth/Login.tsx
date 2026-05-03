@@ -21,23 +21,25 @@ export default function Login() {
   const navigate = useNavigate();
 
   // ── Redirection selon le rôle ───────────────────────────────────────────────
-  const redirectByRole = (role: string) => {
-    switch (role) {
-      case "ADMIN":
-        return navigate("/admin");
-      case "CHEF_DEPARTEMENT":
-        return navigate("/chef");
-      case "ENSEIGNANT":
-        return navigate("/enseignant");
-      case "RESPONSABLE_RESOURCE":
-        return navigate("/responsable");
-      case "FOURNISSEUR":
-        return navigate("/fournisseur");
-      case "TECHNICIEN":
-        return navigate("/technicien");
-      default:
-        setError("Rôle utilisateur inconnu.");
+  const FORCED_ROLES = ["CHEF_DEPARTEMENT", "ENSEIGNANT", "RESPONSABLE_RESOURCE", "TECHNICIEN"];
+
+  const ROLE_PATHS: Record<string, string> = {
+    ADMIN: "/admin",
+    CHEF_DEPARTEMENT: "/chef",
+    ENSEIGNANT: "/enseignant",
+    RESPONSABLE_RESOURCE: "/responsable",
+    FOURNISSEUR: "/fournisseur",
+    TECHNICIEN: "/technicien",
+  };
+
+  const redirectByRole = (role: string, mustChangePassword?: boolean) => {
+    // Si le rôle impose le changement de MDP ET mustChangePassword=true
+    if (mustChangePassword && FORCED_ROLES.includes(role)) {
+      return navigate("/change-password", { replace: true });
     }
+    const path = ROLE_PATHS[role];
+    if (path) return navigate(path);
+    setError("Rôle utilisateur inconnu.");
   };
 
   // ── Étape 1 : login email + password ───────────────────────────────────────
@@ -59,7 +61,7 @@ export default function Login() {
       } else {
         // Rôle unique → sauvegarder et rediriger
         saveSession(data);
-        redirectByRole(data.role!);
+        redirectByRole(data.role!, data.mustChangePassword);
       }
     } catch {
       setError("Email ou mot de passe incorrect.");
@@ -79,7 +81,7 @@ export default function Login() {
     try {
       const res = await loginWithRole(email, password, roleChoisi);
       saveSession(res.data);
-      redirectByRole(res.data.role!);
+      redirectByRole(res.data.role!, res.data.mustChangePassword);
     } catch {
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
